@@ -49,11 +49,7 @@ public:
    T operator --()                                          {return --cValue;}
    T operator --(int)                                       {return cValue--;}
    T operator +=(T mValue)                                  {return cValue+=mValue;}
-<<<<<<< HEAD
-   
-=======
    T operator +=(const CWrapeNumeric<T> &mValue)            {return cValue+=_(mValue);}
->>>>>>> 49f40cf... tmp
    T operator -=(T mValue)                                  {return cValue-=mValue;}
    T operator -=(const CWrapeNumeric<T> &mValue)            {return cValue-=_(mValue);}
    T operator *=(T mValue)                                  {return cValue*=mValue;}
