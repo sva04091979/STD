@@ -26,8 +26,8 @@
 #define SPREAD int(SymbolInfoInteger(NULL,SYMBOL_SPREAD))
 
 #ifdef _DEBUG
-   #define DEL(dObj) do if (CheckPointer(dPtr)==POINTER_DYNAMIC) delete dPtr; while(false)
-   #define DELETE(dObj) do if (CheckPointer(dPtr)==POINTER_DYNAMIC) {delete dPtr; dPtr=NULL;} while(false)
+   #define DEL(dObj) do if (CheckPointer(dObj)==POINTER_DYNAMIC) delete dObj; while(false)
+   #define DELETE(dObj) do if (CheckPointer(dObj)==POINTER_DYNAMIC) {delete dObj; dObj=NULL;} while(false)
 #else
    #define DEL(dObj) delete dObj
    #define DELETE(dObj) do {delete dObj; dObj=NULL;} while(false)
