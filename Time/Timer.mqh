@@ -40,10 +40,11 @@ protected:
    typedef void (*TimerFunc)(STimerInfo& info);
    STimerInfo cInfo;
    TimerFunc cFunc;
+   _tSizeT cCount;
 public:
-   CTimer(){}
-   void Free() {cInfo.Free(); cFunc=NULL;}
-   CTimer* Reset(ulong mTimer,ulong mStep) {cInfo.Reset(mTimer,mStep); return &this;}
+   CTimer():cCount(0){}
+   void Free() {cInfo.Free(); cFunc=NULL; cCount=0;}
+   CTimer* Reset(ulong mTimer,ulong mStep) {cInfo.Reset(mTimer,mStep); cCount=0; return &this;}
    CTimer* SetTimer() {return SetTimer(GetMicrosecondCount());}
    CTimer* SetTimer(ulong mTimer) {cInfo.lastTimer=mTimer; return &this;}
    CTimer* Step(ulong mStep) {cInfo.step=mStep; return &this;}
@@ -54,12 +55,21 @@ public:
    STimerInfo LastInfo() {return cInfo;}
    _tSizeT Control() {return Control(GetMicrosecondCount());}
    _tSizeT Control(ulong mTimer);
+   _tSizeT GetLastCount();
    bool operator !() {return !cInfo.lastTimer||!cInfo.step;}
 };
 //------------------------------------------------------------------------------
 _tSizeT CTimer::Control(ulong mTimer){
    _tSizeT ret=cInfo.Control(mTimer);
-   if (cFunc!=NULL&&ret>0) cFunc(cInfo);
+   if (ret>0){
+      cCount+=ret;
+      if (cFunc!=NULL) cFunc(cInfo);}
+   return ret;}
+//-------------------------------------------------------------------------------
+_tSizeT CTimer::GetLastCount(){
+   if (!cCount) return 0;
+   _tSizeT ret=cCount;
+   cCount=0;
    return ret;}
 
 END_SPACE
