@@ -1,7 +1,7 @@
 #ifndef _STD_C_FLAG_
 #define _STD_C_FLAG_
 
-#include "Define\StdDefine.mqh"
+#include <STD\Define\StdDefine.mqh>
 
 #ifdef USING_STD
    #define _declFlag static _tFlagType
