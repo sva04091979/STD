@@ -6,11 +6,13 @@
    #define END_SPACE }
    #define __std(dName) STD::dName
    #define _tSizeT ulong
+   #define _tIntT long
 #else
    #define NAMESPACE(dName)
    #define END_SPACE
    #define __std(dName) dName
    #define _tSizeT uint
+   #define _tIntT int
 #endif
 
 #define EQUITY AccountInfoDouble(ACCOUNT_EQUITY)
