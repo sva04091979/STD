@@ -1,7 +1,7 @@
 #ifndef _STD_I_ITERATOR_
 #define _STD_I_ITERATOR_
 
-#include <STD\Define\StdDefine.mqh>
+#include <STD\Memory\SharedPtr.mqh>
 
 #ifdef USING_STD
    #define _eIteratorType __std(EIteratorType)
@@ -11,16 +11,20 @@ NAMESPACE(STD)
 
 enum EIteratorType{FORWARD_ITERATOR,BI_DIRECT_ITERATOR};
 
-template<typename IteratorType,typename T>
-class IIterator{
+template<typename TIterator,typename T>
+struct IIterator:protected SSharedPtr<TIterator>{
+   EIteratorType cType;
 protected:
-   IteratorType* cIterator;
-   IIterator(IteratorType* mIterator):cIterator(mIterator){}
+   IIterator(TIterator* mIterator,EIteratorType mType):
+      SSharedPtr<TIterator>(mIterator),cType(mType){}
+   IIterator(IIterator<TIterator,T> &other):
+      SSharedPtr<TIterator>(other),cType(other.cType){}
 public:
-   T Dereference()   const {return _(cIterator);}
-   virtual EIteratorType Type() const=0;
-   bool operator ==(IIterator<IteratorType> &other) {return cIterator.IsEqualy(other);}
-   bool operator !=(IIterator<IteratorType> &other) {return !cIterator.IsEqualy(other);}
+   T Dereference() const {return _(cObject);}
+   EIteratorType Type() const {return cType;}
+   TIterator* Iterator() const {return cObject;}
+   bool operator ==(IIterator<TIterator,T> &other) {return cObject.Equaly(other.cObject)==EQUALLY;}
+   bool operator !=(IIterator<TIterator,T> &other) {return cObject.Equaly(other.cObject)!=EQUALLY;}
 };
 
 END_SPACE
