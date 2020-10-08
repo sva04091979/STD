@@ -3,22 +3,34 @@
 
 #include "Container.mqh"
 #include "ContainerNode.mqh"
-#include <STD\Memory\SharedPtr.mqh>
+#include <STD\Iterator\IForwardIterator.mqh>
 
 #ifdef USING_STD
    #define _tForwardList __std(CForwardList)
+   #define _tForwardIterator __std(CForwardList::iterator)
 #endif
 
 NAMESPACE(STD)
 
 template<typename T>
 class CForwardList:public CContainer{
+public:
    class _CNode:public CForwardNode<T,_CNode>{
    public:
       _CNode(T &obj,_CNode* next):CForwardNode<T,_CNode>(obj,next){}
    };
+   class _CIterator{
+      _CNode* cObj;
+   public:
+      T Dereference() const {return _(cObj);}
+      ECompare Equaly(_CIterator &other) {return _(cObj)==_(other)?EQUALLY:MORE;}
+      _CNode* operator ++() {return cObj=cObj.Next();}
+   };
+   struct iterator:public IForwardIterator<iterator,_CIterator,T>{
+      static iterator Clone(_CIterator* other) {return iterator(other);}
+   };
+protected:
    _CNode* cFront;
-   struct iterator:protected SSharedPtr<_CNode>{};
 public:
   ~CForwardList() {DEL(cFront);}
    T Front() const {return _(cFront);}
