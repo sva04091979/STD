@@ -12,7 +12,7 @@ NAMESPACE(STD)
 
 template<typename T>
 struct SSharedPtr{
-private:
+protected:
    T* cObject;
    CWrapeNumeric<_tSizeT>* cCount;
 public:

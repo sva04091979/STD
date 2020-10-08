@@ -35,7 +35,7 @@
    #define DELETE(dObj) do {delete dObj; dObj=NULL;} while(false)
 #endif
 
-#define _(dPtr) dPtr.Dereference()
+#define _(dPtr) (dPtr).Dereference()
 #define _p(dPtr) dPtr.OverloadPtr()
 #define __sf StringFormat
 
