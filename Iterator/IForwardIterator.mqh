@@ -12,8 +12,8 @@ protected:
    IForwardIterator(Iterator* mIterator,EIteratorType mType):IIterator<Iterator,T>(mIterator,mType){}
    IForwardIterator(const IForwardIterator<IteratorType,Iterator,T> &other):IIterator<Iterator,T>((IIterator<Iterator,T>)other){}
 public:
-   IteratorType operator ++() const {++cObject; return this;}
-   IteratorType operator ++(int) const {IteratorType ret=IteratorType::Clone(cObject++); return ret;}
+   IteratorType operator ++() const {IteratorType ret=IteratorType::Clone(++cObject); return ret;}
+   IteratorType operator ++(int) const {return IteratorType::Clone(cObject++);}
 };
 
 END_SPACE
