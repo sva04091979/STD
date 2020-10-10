@@ -27,6 +27,8 @@
 #define VOLUME(i) iVolume(NULL,PERIOD_CURRENT,i)
 #define SPREAD int(SymbolInfoInteger(NULL,SYMBOL_SPREAD))
 
+#define DEBUG_BREAK(dCondition) do if (dCondition) DebugBreak(); while(false)
+
 #ifdef _DEBUG
    #define DEL(dObj) do if (CheckPointer(dObj)==POINTER_DYNAMIC) delete dObj; while(false)
    #define DELETE(dObj) do if (CheckPointer(dObj)==POINTER_DYNAMIC) {delete dObj; dObj=NULL;} while(false)
