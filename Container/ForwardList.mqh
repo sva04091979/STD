@@ -13,24 +13,18 @@
 NAMESPACE(STD)
 
 template<typename T>
+class CForwardNode:public _CForwardNode<T,CForwardNode>{
+};
+
+template<typename T>
+struct SForwardIterator:public <SForwardIterator<T>,CForwardNode<T>,T>{
+
+};
+
+template<typename T>
 class CForwardList:public CContainer{
-public:
-   class _CNode:public CForwardNode<T,_CNode>{
-   public:
-      _CNode(T &obj,_CNode* next):CForwardNode<T,_CNode>(obj,next){}
-   };
-   class _CIterator{
-      _CNode* cObj;
-   public:
-      T Dereference() const {return _(cObj);}
-      ECompare Equaly(_CIterator &other) {return _(cObj)==_(other)?EQUALLY:MORE;}
-      _CNode* operator ++() {return cObj=cObj.Next();}
-   };
-   struct iterator:public IForwardIterator<iterator,_CIterator,T>{
-      static iterator Clone(_CIterator* other) {return iterator(other);}
-   };
 protected:
-   _CNode* cFront;
+   CForwardNode<T>* cFront;
 public:
   ~CForwardList() {DEL(cFront);}
    T Front() const {return _(cFront);}
@@ -41,7 +35,7 @@ public:
 template<typename T>
 void CForwardList::Push(T &obj){
    ++cSize;
-   cFront=new _CNode(obj,cFront);}
+   cFront=new CForwardNode<T>(obj,cFront);}
 //----------------------------------------------------------
 template<typename T>
 T CForwardList::Pop(){

@@ -16,20 +16,19 @@ public:
 };
 
 template<typename T,typename Type>
-class CForwardNode:public CContainerNode<T,Type>{
+class _CForwardNode:public CContainerNode<T,Type>{
 protected:
    Type* cNext;
-   CForwardNode(T &mObj,Type* mNext):CContainerNode<T,Type>(mObj),cNext(mNext){}
-  ~CForwardNode() {if (cNext!=NULL) DEL(cNext);}
+   _CForwardNode(T &mObj,Type* mNext):CContainerNode<T,Type>(mObj),cNext(mNext){}
+  ~_CForwardNode(){}
 public:
    Type* Next() const {return cNext;}
    Type* Free() override;
 };
 //-------------------------------------------------
 template<typename T,typename Type>
-Type* CForwardNode::Free(){
+Type* _CForwardNode::Free(){
    Type* ret=cNext;
-   cNext=NULL;
    delete &this;
    return ret;
 }
