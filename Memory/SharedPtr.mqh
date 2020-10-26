@@ -4,51 +4,50 @@
 #include <STD\Define\StdDefine.mqh>
 #include "Wrape.mqh"
 
-#ifdef USING_STD
-   #define _tSharedPtr __std(SSharedPtr)
-#endif
+#define _tSharedPtr __std(SSharedPtr)
+#define _tdeclSharedPtr __decl(SSharedPtr)
 
 NAMESPACE(STD)
 
 template<typename T>
-struct SSharedPtr{
+struct _tdeclSharedPtr{
 protected:
    T* cObject;
    CWrapeNumeric<_tSizeT>* cCount;
 public:
-   SSharedPtr():cObject(NULL),cCount(NULL){}
-   SSharedPtr(T* obj):cObject(obj),cCount(!obj?NULL:new CWrapeNumeric<_tSizeT>(1)){}
-   SSharedPtr(T* obj,CWrapeNumeric<_tSizeT>* _count):cObject(obj),cCount(!obj?NULL:_count){if (cCount!=NULL) ++cCount;}
-   SSharedPtr(SSharedPtr<T> &other);
-  ~SSharedPtr() {if (cCount!=NULL&&!--cCount) {delete cObject; delete cCount;}}
+   _tdeclSharedPtr():cObject(NULL),cCount(NULL){}
+   _tdeclSharedPtr(T* obj):cObject(obj),cCount(!obj?NULL:new CWrapeNumeric<_tSizeT>(1)){}
+   _tdeclSharedPtr(T* obj,CWrapeNumeric<_tSizeT>* _count):cObject(obj),cCount(!obj?NULL:_count){if (cCount!=NULL) ++cCount;}
+   _tdeclSharedPtr(_tdeclSharedPtr<T> &other);
+  ~_tdeclSharedPtr() {if (cCount!=NULL&&!--cCount) {delete cObject; delete cCount;}}
    template<typename T1>
-   SSharedPtr<T1> StaticCast() {SSharedPtr<T1> ret((T1*)cObject,cCount); return ret;}
+   _tdeclSharedPtr<T1> StaticCast() {_tdeclSharedPtr<T1> ret((T1*)cObject,cCount); return ret;}
    template<typename T1>
-   SSharedPtr<T1> DynamicCast() {SSharedPtr<T1> ret(dynamic_cast<T1*>(cObject),cCount); return ret;}
+   _tdeclSharedPtr<T1> DynamicCast() {_tdeclSharedPtr<T1> ret(dynamic_cast<T1*>(cObject),cCount); return ret;}
    T* Dereference() {return cObject;}
    T* Get()         {return cObject;}
    void Free();
-   void operator =(SSharedPtr<T> &other);
+   void operator =(_tdeclSharedPtr<T> &other);
    void operator =(T* ptr);
    _tSizeT Count() {return !cCount?0:_(cCount);}
    bool operator !() {return !cObject;}
 };
 //--------------------------------------------------------------------------
 template<typename T>
-SSharedPtr::SSharedPtr(SSharedPtr<T> &other){
+_tdeclSharedPtr::_tdeclSharedPtr(_tdeclSharedPtr<T> &other){
    cObject=other.cObject;
    cCount=other.cCount;
    if (cCount!=NULL) ++cCount;}
 //--------------------------------------------------------------------------
 template<typename T>
-void SSharedPtr::Free(){
+void _tdeclSharedPtr::Free(){
    if (!cCount) return;
    if (!--cCount){delete cObject; delete cCount;}
    cObject=NULL;
    cCount=NULL;}
 //--------------------------------------------------------------------------
 template<typename T>
-void SSharedPtr::operator =(SSharedPtr<T> &other){
+void _tdeclSharedPtr::operator =(_tdeclSharedPtr<T> &other){
    if (cObject==_(other)) return;
    if (cCount!=NULL&&!--cCount) {delete cObject; delete cCount;}
    cObject=other.cObject;
@@ -57,7 +56,7 @@ void SSharedPtr::operator =(SSharedPtr<T> &other){
 }
 //--------------------------------------------------------------------------
 template<typename T>
-void SSharedPtr::operator =(T* ptr){
+void _tdeclSharedPtr::operator =(T* ptr){
    if (cObject==ptr) return;
    if (cCount!=NULL&&!--cCount) {delete cObject; delete cCount;}
    cObject=ptr;
