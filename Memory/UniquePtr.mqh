@@ -3,48 +3,48 @@
 
 #include <STD\Define\StdDefine.mqh>
 
-#ifdef USING_STD
-   #define _tUniquePtr __std(SUniquePtr)
-#endif
+#define _tUniquePtr __std(SUniquePtr)
+
+#define _tdeclUniquePtr __decl(SUniquePtr)
 
 NAMESPACE(STD)
 
 template<typename T>
-struct SUniquePtr{
+struct _tdeclUniquePtr{
 private:
    T* cObject;
 public:
-   SUniquePtr():cObject(NULL){}
-   SUniquePtr(T* obj):cObject(obj){}
-   SUniquePtr(SUniquePtr<T> &other):cObject(Move(other)){}
-  ~SUniquePtr() {delete cObject;}
+   _tdeclUniquePtr():cObject(NULL){}
+   _tdeclUniquePtr(T* obj):cObject(obj){}
+   _tdeclUniquePtr(_tdeclUniquePtr<T> &other):cObject(_fdeclMove(other)){}
+  ~_tdeclUniquePtr() {delete cObject;}
    template<typename T1>
-   SUniquePtr<T1> StaticCast() {SUniquePtr<T1> ret((T1*)cObject); cObject=NULL; return ret;}
+   _tdeclUniquePtr<T1> StaticCast() {_tdeclUniquePtr<T1> ret((T1*)cObject); cObject=NULL; return ret;}
    template<typename T1>
-   SUniquePtr<T1> DynamicCast() {SUniquePtr<T1> ret(dynamic_cast<T1*>(cObject)); cObject=NULL; return ret;}
+   _tdeclUniquePtr<T1> DynamicCast() {_tdeclUniquePtr<T1> ret(dynamic_cast<T1*>(cObject)); cObject=NULL; return ret;}
    T* Dereference() {return cObject;}
    T* Get()         {return cObject;}
    void Free()      {DELETE(cObject);}
    T* Move()        {T* ret=cObject; cObject=NULL; return ret;}
-   void operator =(SUniquePtr<T> &other);
+   void operator =(_tdeclUniquePtr<T> &other);
    void operator =(T* ptr);
    bool operator !() {return !cObject;}
 };
 //--------------------------------------------------------------------------
 template<typename T>
-void SUniquePtr::operator =(SUniquePtr<T> &other){
+void _tdeclUniquePtr::operator =(_tdeclUniquePtr<T> &other){
    DEL(cObject);
-   cObject=Move(other);
+   cObject=_fdeclMove(other);
 }
 //--------------------------------------------------------------------------
 template<typename T>
-void SUniquePtr::operator =(T* ptr){
+void _tdeclUniquePtr::operator =(T* ptr){
    DEL(cObject);
-   cObject=Move(ptr);
+   cObject=_fdeclMove(ptr);
 }
 
 template<typename T>
-T* Move(SUniquePtr<T> &ptr) {return ptr.Move();}
+T* _fdeclMove(_tdeclUniquePtr<T> &ptr) {return ptr.Move();}
 
 END_SPACE
 

@@ -13,11 +13,11 @@ template<typename T>
 struct _tdeclSharedPtr{
 protected:
    T* cObject;
-   CWrapeNumeric<_tSizeT>* cCount;
+   _tCounter* cCount;
 public:
    _tdeclSharedPtr():cObject(NULL),cCount(NULL){}
-   _tdeclSharedPtr(T* obj):cObject(obj),cCount(!obj?NULL:new CWrapeNumeric<_tSizeT>(1)){}
-   _tdeclSharedPtr(T* obj,CWrapeNumeric<_tSizeT>* _count):cObject(obj),cCount(!obj?NULL:_count){if (cCount!=NULL) ++cCount;}
+   _tdeclSharedPtr(T* obj):cObject(obj),cCount(!obj?NULL:new _tCounter(1)){}
+   _tdeclSharedPtr(T* obj,_tCounter* _count):cObject(obj),cCount(!obj?NULL:_count){if (cCount!=NULL) ++cCount;}
    _tdeclSharedPtr(_tdeclSharedPtr<T> &other);
   ~_tdeclSharedPtr() {if (cCount!=NULL&&!--cCount) {delete cObject; delete cCount;}}
    template<typename T1>

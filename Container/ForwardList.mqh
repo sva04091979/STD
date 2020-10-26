@@ -5,30 +5,35 @@
 #include "ContainerNode.mqh"
 #include <STD\Iterator\IForwardIterator.mqh>
 
-#ifdef USING_STD
-   #define _tForwardList __std(CForwardList)
-   #define _tForwardIterator __std(CForwardList::iterator)
-#endif
+#define _tForwardList __std(CForwardList)
+#define _tForwardIterator __std(SForwardIterator)
+
+#define _tdeclForwardList __decl(CForwardList)
+#define _tdeclForwardIterator __decl(SForwardIterator)
+#define _tdeclForwardNode __decl(CForwardNode)
 
 NAMESPACE(STD)
 
 template<typename T>
-class CForwardNode:public _CForwardNode<T,CForwardNode>{
+class _tdeclForwardNode:public _tdecl_ForwardNode<T,_tdeclForwardNode<T>>{
 public:
-   CForwardNode(const T &mObj,CForwardNode<T>* mNext):_CForwardNode<T,CForwardNode>(mObj,mNext){}
+   _tdeclForwardNode(const T &mObj,_tdeclForwardNode<T>* mNext):_tdecl_ForwardNode<T,_tdeclForwardNode<T>>(mObj,mNext){}
 };
 
 template<typename T>
-struct SForwardIterator:public <SForwardIterator<T>,CForwardNode<T>,T>{
-
+struct _tdeclForwardIterator:public _tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>{
+   _tdeclForwardIterator(_tdeclForwardNode<T>* mNode):_tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>(mNode){}
+   _tdeclForwardIterator(const _tdeclForwardIterator<T> &mOther):
+      _tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>((_tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>)other){}
 };
 
 template<typename T>
-class CForwardList:public CContainer{
+class _tdeclForwardList:public _tdeclContainer{
 protected:
-   CForwardNode<T>* cFront;
+   _tdeclForwardNode<T>* cFront;
 public:
   ~CForwardList() {DEL(cFront);}
+   _tdeclForwardIterator<T> Begin() {return _tdeclForwardIterator<T>(cFront);}
    T Front() const {return _(cFront);}
    void Push(T &obj);
    T Pop();
@@ -57,9 +62,9 @@ void Test(){
       STest(){}
       STest(int _a):a(_a){}
       STest(const STest &other){this=other;}};
-   STD::CForwardList<int> x;
-   STD::CForwardList<CTest*> y;
-   STD::CForwardList<STest> z;
+   _tForwardList<int> x;
+   _tForwardList<CTest*> y;
+   _tForwardList<STest> z;
    x.Push(_rv(10)); y.Push(_rv(new CTest));z.Push(STest(88));
    x.Front(); y.Front();
    Print(x.Pop()); Print(z.Pop().a);delete y.Pop();

@@ -1,30 +1,31 @@
 #ifndef _STD_I_ITERATOR_
 #define _STD_I_ITERATOR_
 
-#include <STD\Memory\SharedPtr.mqh>
+#include <STD\Memory\AutoPtr.mqh>
 
-#ifdef USING_STD
-   #define _eIteratorType __std(EIteratorType)
-#endif
+#define _tEIteratorType __std(EIteratorType)
+
+#define _tdecl_Iterator __decl(_SIterator)
+#define _tdeclEIteratorType __decl(EIteratorType)
 
 NAMESPACE(STD)
 
-enum EIteratorType{FORWARD_ITERATOR,BI_DIRECT_ITERATOR};
+enum _tdeclEIteratorType{FORWARD_ITERATOR,BI_DIRECT_ITERATOR};
 
-template<typename TIterator,typename T>
-struct IIterator:protected SSharedPtr<TIterator>{
-   EIteratorType cType;
+template<typename Node,typename T>
+struct _tdecl_Iterator:protected _tdeclAutoPtr<Node>{
+   _tdeclEIteratorType cType;
 protected:
-   IIterator(TIterator* mIterator,EIteratorType mType):
-      SSharedPtr<TIterator>(mIterator),cType(mType){}
-   IIterator(IIterator<TIterator,T> &other):
-      SSharedPtr<TIterator>(other),cType(other.cType){}
+   _tdecl_Iterator(Node* mIterator,EIteratorType mType):
+      _tdeclAutoPtr<Node>(mIterator),cType(mType){}
+   _tdecl_Iterator(_tdecl_Iterator<Node,T> &other):
+      _tdeclAutoPtr<Node>(other),cType(other.cType){}
 public:
    T Dereference() const {return _(cObject);}
-   EIteratorType Type() const {return cType;}
-   TIterator* Iterator() const {return cObject;}
-   bool operator ==(IIterator<TIterator,T> &other) {return cObject.Equaly(other.cObject)==EQUALLY;}
-   bool operator !=(IIterator<TIterator,T> &other) {return cObject.Equaly(other.cObject)!=EQUALLY;}
+   _tdeclEIteratorType Type() const {return cType;}
+   Node* Iterator() const {return cObject;}
+   bool operator ==(_tdecl_Iterator<Node,T> &other) {return cObject.Equal(other.cObject)==_eEqual;}
+   bool operator !=(_tdecl_Iterator<Node,T> &other) {return cObject.Equal(other.cObject)!=_eEqual;}
 };
 
 END_SPACE
