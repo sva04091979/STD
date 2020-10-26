@@ -5,12 +5,14 @@
    #define NAMESPACE(dName) namespace dName {
    #define END_SPACE }
    #define __std(dName) STD::dName
+   #define __decl(dName) dName
    #define _tSizeT ulong
    #define _tIntT long
 #else
    #define NAMESPACE(dName)
    #define END_SPACE
-   #define __std(dName) dName
+   #define __std(dName) STD_##dName
+   #define __decl(dName) __std(dName)
    #define _tSizeT uint
    #define _tIntT int
 #endif
@@ -71,48 +73,50 @@
 
 #define _rv(dVal) (__std(FRVWrape(dVal))).cVal
 
-#ifdef USING_STD
-   #define _eCompare __std(ECompare)
-   #define _eDirect __std(EDirect)
-   #define _fMove __std(Move)
-   #define _fSwap __std(Swap)
-#endif
+#define _tECompare __std(ECompare)
+#define _tdeclECompare __decl(ECompare)
+#define _tEDirect __std(EDirect)
+#define _tdeclEDirect __decl(EDirect)
+#define _fMove __std(Move)
+#define _fdeclMove __decl(Move)
+#define _fSwap __std(Swap)
+#define _fdeclSwap __decl(Swap)
 
 NAMESPACE(STD)
 
-enum ECompare{
+enum _tdeclECompare{
    LESS=-1,
    EQUALLY=0,
    MORE=1
 };
 
-enum EDirect{
+enum _tdeclEDirect{
    UP=1,
    DOWN=-1
 };
 
 template<typename T>
-T* Move(T* &mPtr){
+T* _fdeclMove(T* &mPtr){
    T* ret=mPtr;
    mPtr=NULL;
    return ret;}
 
 template<typename T1,typename T2>
-void Swap(T1 &l,T2 &r){
+void _fdeclSwap(T1 &l,T2 &r){
    T1 tmp=l;
    l=r;
    r=tmp;}
 
 template<typename T>
-class RVWrape{
+class __decl(RVWrape){
 public:
    T cVal;
-   RVWrape(T mVal):cVal(mVal){}
-   RVWrape(RVWrape<T> &mOther){this=mOther;}
+   __decl(RVWrape)(T mVal):cVal(mVal){}
+   __decl(RVWrape)(__decl(RVWrape<T>) &mOther){this=mOther;}
 };
 
 template<typename T>
-RVWrape<T> FRVWrape(T fVal){return RVWrape<T>(fVal);}
+__decl(RVWrape<T>) __decl(FRVWrape)(T fVal){return __decl(RVWrape<T>)(fVal);}
 
 END_SPACE
 
