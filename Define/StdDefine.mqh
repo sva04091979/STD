@@ -7,14 +7,14 @@
    #define __std(dName) STD::dName
    #define __decl(dName) dName
    #define _tSizeT ulong
-   #define _tIntT long
+   #define _tPtrDiffT long
 #else
    #define NAMESPACE(dName)
    #define END_SPACE
    #define __std(dName) STD_##dName
    #define __decl(dName) __std(dName)
    #define _tSizeT uint
-   #define _tIntT int
+   #define _tPtrDiffT int
 #endif
 
 #define EQUITY AccountInfoDouble(ACCOUNT_EQUITY)
