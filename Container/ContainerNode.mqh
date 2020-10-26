@@ -9,7 +9,7 @@ template<typename T,typename Type>
 class CContainerNode{
 protected:
    T cObject;
-   CContainerNode(T &mObj):cObject(mObj){}
+   CContainerNode(const T &mObj):cObject((T)mObj){}
 public:
    T Dereference() const {return cObject;}
    virtual Type* Free()=0;
@@ -19,7 +19,7 @@ template<typename T,typename Type>
 class _CForwardNode:public CContainerNode<T,Type>{
 protected:
    Type* cNext;
-   _CForwardNode(T &mObj,Type* mNext):CContainerNode<T,Type>(mObj),cNext(mNext){}
+   _CForwardNode(const T &mObj,Type* mNext):CContainerNode<T,Type>(mObj),cNext(mNext){}
   ~_CForwardNode(){}
 public:
    Type* Next() const {return cNext;}

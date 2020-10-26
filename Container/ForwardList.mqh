@@ -14,6 +14,8 @@ NAMESPACE(STD)
 
 template<typename T>
 class CForwardNode:public _CForwardNode<T,CForwardNode>{
+public:
+   CForwardNode(const T &mObj,CForwardNode<T>* mNext):_CForwardNode<T,CForwardNode>(mObj,mNext){}
 };
 
 template<typename T>
@@ -39,7 +41,7 @@ void CForwardList::Push(T &obj){
 //----------------------------------------------------------
 template<typename T>
 T CForwardList::Pop(){
-   if (!cFront) return NULL;
+   if (!cFront) return _(cFront);
    --cSize;
    T ret=_(cFront);
    cFront=cFront.Free();
@@ -50,12 +52,17 @@ END_SPACE
 
 void Test(){
    class CTest{};
+   struct STest{
+      int a;
+      STest(){}
+      STest(int _a):a(_a){}
+      STest(const STest &other){this=other;}};
    STD::CForwardList<int> x;
    STD::CForwardList<CTest*> y;
+   STD::CForwardList<STest> z;
+   x.Push(_rv(10)); y.Push(_rv(new CTest));z.Push(STest(88));
    x.Front(); y.Front();
-   x.IsEmpty(); y.IsEmpty();
-   x.Push(_rv(10)); y.Push(_rv(new CTest));
-   x.Pop(); y.Pop();
+   Print(x.Pop()); Print(z.Pop().a);delete y.Pop();
 }
 
 #endif

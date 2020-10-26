@@ -72,8 +72,8 @@
 #define _rv(dVal) (__std(FRVWrape(dVal))).cVal
 
 #ifdef USING_STD
-   #define _eCompare __std(ECompare)
-   #define _eDirect __std(EDirect)
+   #define _tECompare __std(ECompare)
+   #define _tEDirect __std(EDirect)
    #define _fMove __std(Move)
    #define _fSwap __std(Swap)
 #endif
