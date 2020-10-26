@@ -84,15 +84,20 @@
 
 NAMESPACE(STD)
 
+#define _eLess __std(LESS)
+#define _eEqual __std(EQUAL)
+#define _eMore __std(MORE)
 enum _tdeclECompare{
-   LESS=-1,
-   EQUALLY=0,
-   MORE=1
+   __decl(LESS)=-1,
+   __decl(EQUAL)=0,
+   __decl(MORE)=1
 };
 
+#define _eUp __std(UP)
+#define _eDown __std(DOWN)
 enum _tdeclEDirect{
-   UP=1,
-   DOWN=-1
+   __decl(UP)=1,
+   __decl(DOWN)=-1
 };
 
 template<typename T>
@@ -112,11 +117,11 @@ class __decl(RVWrape){
 public:
    T cVal;
    __decl(RVWrape)(T mVal):cVal(mVal){}
-   __decl(RVWrape)(__decl(RVWrape<T>) &mOther){this=mOther;}
+   __decl(RVWrape)(__decl(RVWrape)<T> &mOther){this=mOther;}
 };
 
 template<typename T>
-__decl(RVWrape<T>) __decl(FRVWrape)(T fVal){return __decl(RVWrape<T>)(fVal);}
+__decl(RVWrape)<T> __decl(FRVWrape)(T fVal){return __decl(RVWrape<T>)(fVal);}
 
 END_SPACE
 
