@@ -35,8 +35,6 @@ public:
 template<typename T>
 struct _tdeclForwardIterator:public _tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>{
    _tdeclForwardIterator(_tdeclForwardNode<T>* mNode):
-      _tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>(new _tdeclForwardNode<T>(mNode)){}
-   _tdeclForwardIterator(_tdeclForwardNodeEnd<T>* mNode):
       _tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>(mNode){}
    _tdeclForwardIterator(const _tdeclForwardIterator<T> &mOther):
       _tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>(mOther.GetNode().IsEnd()?new _tdeclForwardNodeEnd<T>((_tdeclForwardNodeEnd<T>*)mOther.GetNode())

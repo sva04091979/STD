@@ -22,9 +22,16 @@ public:
    T Dereference() const {return _(cPtr);}
    _tdeclEIteratorType Type() const {return cType;}
    Node* GetNode() {return cPtr.GetNode();}
-   bool operator ==(_tdecl_Iterator<mWrape,T> &other) {return _(cPtr).Equal(_(other.cPtr));}
-   bool operator !=(_tdecl_Iterator<mWrape,T> &other) {return !_(cPtr).Equal(_(other.cPtr));}
+   void operator =(_tdecl_Iterator<Wrape,Node,T> &mOther);
+   bool operator ==(_tdecl_Iterator<Wrape,Node,T> &other) {return cPtr.GetNode().Equal(other.cPtr.GetNode());}
+   bool operator !=(_tdecl_Iterator<Wrape,Node,T> &other) {return !cPtr.GetNode().Equal(other.cPtr.GetNode());}
 };
+//-----------------------------------------------------------------
+template<typename Wrape,typename Node,typename T>
+void _tdecl_Iterator::operator =(_tdecl_Iterator<Wrape,Node,T> &mOther){
+   DEL(cPtr);
+   cPtr=new Wrape(cPtr.GetNode());
+}
 
 END_SPACE
 

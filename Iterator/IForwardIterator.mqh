@@ -15,7 +15,7 @@ class _tdecl_ForwardProxy{
    Node* cNode;
 public:
    _tdecl_ForwardProxy(Node* mNode):cNode(mNode){}
-   T* Dereference() {return _(cNode);}
+   T Dereference() {return _(cNode);}
    Node* GetNode() {return cNode;}
    void operator ++() {cNode=cNode.Next();}
    bool IsEnd() {return cNode.IsEnd();}
@@ -28,8 +28,8 @@ protected:
    _tdecl_ForwardIterator(Node* mNode,_tdeclEIteratorType mType):_tdecl_Iterator<_Typenames>(new _tdecl_ForwardProxy<Node,T>(mNode),mType){}
    _tdecl_ForwardIterator(const Iterator &other):_tdecl_Iterator<_Typenames>(new _tdecl_ForwardProxy<Node,T>(other.GetNode()),other.Type()){}
 public:
-   Iterator operator ++() {return Iterator(++cPtr);}
-   Iterator operator ++(int) {return Iterator(cPtr++);}
+   Iterator operator ++() {++cPtr; return Iterator(cPtr.GetNode());}
+   Iterator operator ++(int) {Iterator ret(cPtr.GetNode()); ++cPtr; return ret;}
 };
 
 END_SPACE

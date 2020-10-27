@@ -11,36 +11,37 @@ NAMESPACE(STD)
 
 template<typename T>
 struct _tdeclUniquePtr{
-private:
-   T* cObject;
+protected:
+   T* cPtr;
 public:
-   _tdeclUniquePtr():cObject(NULL){}
-   _tdeclUniquePtr(T* &obj):cObject(_fdeclMove(obj)){}
-   _tdeclUniquePtr(_tdeclUniquePtr<T> &other):cObject(_fdeclMove(other)){}
-  ~_tdeclUniquePtr() {delete cObject;}
+   _tdeclUniquePtr():cPtr(NULL){}
+   _tdeclUniquePtr(T* &obj):cPtr(obj){obj=NULL;}
+   _tdeclUniquePtr(_tdeclUniquePtr<T> &other):cPtr(other.Move()){}
+  ~_tdeclUniquePtr() {delete cPtr;}
    template<typename T1>
-   _tdeclUniquePtr<T1> StaticCast() {_tdeclUniquePtr<T1> ret((T1*)cObject); cObject=NULL; return ret;}
+   _tdeclUniquePtr<T1> StaticCast() {_tdeclUniquePtr<T1> ret((T1*)cPtr); cPtr=NULL; return ret;}
    template<typename T1>
-   _tdeclUniquePtr<T1> DynamicCast() {_tdeclUniquePtr<T1> ret(dynamic_cast<T1*>(cObject)); cObject=NULL; return ret;}
-   T* Dereference() {return cObject;}
-   T* Get()         {return cObject;}
-   void Free()      {DELETE(cObject);}
-   T* Move()        {T* ret=cObject; cObject=NULL; return ret;}
+   _tdeclUniquePtr<T1> DynamicCast() {_tdeclUniquePtr<T1> ret(dynamic_cast<T1*>(cPtr)); cPtr=NULL; return ret;}
+   T* Dereference() {return cPtr;}
+   T* Get()         {return cPtr;}
+   void Free()      {DELETE(cPtr);}
+   T* Move()        {T* ret=cPtr; cPtr=NULL; return ret;}
    void operator =(_tdeclUniquePtr<T> &other);
    void operator =(T* &ptr);
-   bool operator !() {return !cObject;}
+   bool operator !() {return !cPtr;}
 };
 //--------------------------------------------------------------------------
 template<typename T>
 void _tdeclUniquePtr::operator =(_tdeclUniquePtr<T> &other){
-   DEL(cObject);
-   cObject=_fdeclMove(other);
+   DEL(cPtr);
+   cPtr=other.Move();
 }
 //--------------------------------------------------------------------------
 template<typename T>
 void _tdeclUniquePtr::operator =(T* &ptr){
-   DEL(cObject);
-   cObject=_fdeclMove(ptr);
+   DEL(cPtr);
+   cPtr=ptr;
+   ptr=NULL;
 }
 
 template<typename T>
