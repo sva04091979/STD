@@ -46,17 +46,17 @@ Type* _tdecl_ForwardNode::Free(){
 }
 //-------------------------------------------------
 template<typename T,typename Type>
-Type* operator ++(){
-   cObject=cNext.cObject;
-   cNext=cNext.cNext;
-   return new Type(this);
+Type* _tdecl_ForwardNode::operator ++(){
+   cObject=_(cNext);
+   cNext=cNext.Next();
+   return new Type((Type*)&this);
 }
 //-------------------------------------------------
 template<typename T,typename Type>
-Type* operator ++(int){
-   Type* ret=new Type(this);
-   cObject=cNext.cObject;
-   cNext=cNext.cNext;
+Type* _tdecl_ForwardNode::operator ++(int){
+   Type* ret=new Type((Type*)&this);
+   cObject=_(cNext);
+   cNext=cNext.Next();
    return ret;
 }
 

@@ -15,8 +15,8 @@ protected:
    T* cPtr;
 public:
    _tdeclAutoPtr():cPtr(NULL){}
-   _tdeclAutoPtr(T* obj):cPtr(obj){}
-   _tdeclAutoPtr(_tdeclAutoPtr<T> &other):cPtr(_(other)){}
+   _tdeclAutoPtr(T* obj):cPtr(new T(obj)){}
+   _tdeclAutoPtr(_tdeclAutoPtr<T> &other):cPtr(new T(_(other))){}
   ~_tdeclAutoPtr() {delete cPtr;}
    template<typename T1>
    _tdeclAutoPtr<T1> StaticCast() {return _tdeclAutoPtr<T1>(new T1(cObject));}

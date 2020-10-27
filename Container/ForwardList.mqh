@@ -83,11 +83,16 @@ void Test(){
       STest(const STest &other){this=other;}
       bool operator ==(STest &other){return a==other.a;}};
    _tForwardList<int> x;
-   _tForwardList<CTest*> y;
-   _tForwardList<STest> z;
-   x.Push(_rv(10)); y.Push(_rv(new CTest));z.Push(STest(88));
-   x.Front(); y.Front();
-   Print(x.Pop()); Print(z.Pop().a);delete y.Pop();
+//   _tForwardList<CTest*> y;
+//   _tForwardList<STest> z;
+//   x.Push(_rv(10)); y.Push(_rv(new CTest));z.Push(STest(88));
+//   x.Front(); y.Front();
+//   Print(x.Pop()); Print(z.Pop().a);delete y.Pop();
+   for(int i=0;i<10;x.Push(_rv(i++)));
+   for (_tForwardIterator<int> it(x.Begin());
+        it!=x.End();
+        ++it)
+      Print(_(it));
 }
 
 #endif
