@@ -12,12 +12,14 @@ template<typename T,typename Type>
 class _tdecl_ContainerNode{
 protected:
    T cObject;
+   _tdecl_ContainerNode(){}
    _tdecl_ContainerNode(const T &mObj):cObject((T)mObj){}
    _tdecl_ContainerNode(const Type &mOther):cObject(_(mOther)){}
 public:
    T Dereference() const {return cObject;}
-   _tECompare Equal(_tdecl_ContainerNode<T,Type> &mOther){return cObject==mOther.cObject?_eEqual:cObject<mOther.cObject?_eLess:_eMore;}
+   virtual bool Equal(Type &mOther){return !mOther.IsEnd()&&cObject==_(mOther);}
    virtual Type* Free()=0;
+   virtual bool IsEnd() {return false;}
 };
 ////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
@@ -25,6 +27,7 @@ template<typename T,typename Type>
 class _tdecl_ForwardNode:public _tdecl_ContainerNode<T,Type>{
 protected:
    Type* cNext;
+   _tdecl_ForwardNode():_tdecl_ContainerNode<T,Type>(){}
    _tdecl_ForwardNode(const T &mObj,Type* mNext):_tdecl_ContainerNode<T,Type>(mObj),cNext(mNext){}
    _tdecl_ForwardNode(const Type &mOther):_tdecl_ContainerNode<T,Type>(mOther),cNext(mOther.Next()){}
   ~_tdecl_ForwardNode(){}
@@ -44,7 +47,6 @@ Type* _tdecl_ForwardNode::Free(){
 //-------------------------------------------------
 template<typename T,typename Type>
 Type* operator ++(){
-   if (!cNext) return NULL;
    cObject=cNext.cObject;
    cNext=cNext.cNext;
    return new Type(this);
@@ -52,7 +54,6 @@ Type* operator ++(){
 //-------------------------------------------------
 template<typename T,typename Type>
 Type* operator ++(int){
-   if (!cNext) return NULL;
    Type* ret=new Type(this);
    cObject=cNext.cObject;
    cNext=cNext.cNext;

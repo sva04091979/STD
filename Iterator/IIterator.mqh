@@ -18,14 +18,12 @@ struct _tdecl_Iterator:protected _tdeclAutoPtr<Node>{
 protected:
    _tdecl_Iterator(Node* mIterator,EIteratorType mType):
       _tdeclAutoPtr<Node>(mIterator),cType(mType){}
-   _tdecl_Iterator(_tdecl_Iterator<Node,T> &other):
-      _tdeclAutoPtr<Node>(other),cType(other.cType){}
 public:
    T Dereference() const {return _(cPtr);}
    _tdeclEIteratorType Type() const {return cType;}
    Node* GetNode() const {return cPtr;}
-   bool operator ==(_tdecl_Iterator<Node,T> &other) {return cPtr.Equal(other.cPtr)==_eEqual;}
-   bool operator !=(_tdecl_Iterator<Node,T> &other) {return cPtr.Equal(other.cPtr)!=_eEqual;}
+   bool operator ==(_tdecl_Iterator<Node,T> &other) {return cPtr.Equal(other.cPtr);}
+   bool operator !=(_tdecl_Iterator<Node,T> &other) {return !cPtr.Equal(other.cPtr);}
 };
 
 END_SPACE
