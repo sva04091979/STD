@@ -7,6 +7,7 @@
 
 #define _tForwardList __std(CForwardList)
 #define _tForwardIterator __std(SForwardIterator)
+//#define _tForwardNode __std(CForwardNode)
 
 #define _tdeclForwardList __decl(CForwardList)
 #define _tdeclForwardIterator __decl(SForwardIterator)
@@ -18,13 +19,14 @@ template<typename T>
 class _tdeclForwardNode:public _tdecl_ForwardNode<T,_tdeclForwardNode<T>>{
 public:
    _tdeclForwardNode(const T &mObj,_tdeclForwardNode<T>* mNext):_tdecl_ForwardNode<T,_tdeclForwardNode<T>>(mObj,mNext){}
+   _tdeclForwardNode(const _tdeclForwardNode<T> &mOther):_tdecl_ForwardNode<T,_tdeclForwardNode<T>>(mOther){}
 };
 
 template<typename T>
 struct _tdeclForwardIterator:public _tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>{
    _tdeclForwardIterator(_tdeclForwardNode<T>* mNode):_tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>(mNode){}
    _tdeclForwardIterator(const _tdeclForwardIterator<T> &mOther):
-      _tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>((_tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>)other){}
+      _tdecl_ForwardIterator<_tdeclForwardIterator<T>,_tdeclForwardNode<T>,T>(other){}
 };
 
 template<typename T>

@@ -21,11 +21,11 @@ protected:
    _tdecl_Iterator(_tdecl_Iterator<Node,T> &other):
       _tdeclAutoPtr<Node>(other),cType(other.cType){}
 public:
-   T Dereference() const {return _(cObject);}
+   T Dereference() const {return _(cPtr);}
    _tdeclEIteratorType Type() const {return cType;}
-   Node* Iterator() const {return cObject;}
-   bool operator ==(_tdecl_Iterator<Node,T> &other) {return cObject.Equal(other.cObject)==_eEqual;}
-   bool operator !=(_tdecl_Iterator<Node,T> &other) {return cObject.Equal(other.cObject)!=_eEqual;}
+   Node* GetNode() const {return cPtr;}
+   bool operator ==(_tdecl_Iterator<Node,T> &other) {return cPtr.Equal(other.cPtr)==_eEqual;}
+   bool operator !=(_tdecl_Iterator<Node,T> &other) {return cPtr.Equal(other.cPtr)!=_eEqual;}
 };
 
 END_SPACE

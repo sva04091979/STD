@@ -13,8 +13,10 @@ class _tdecl_ContainerNode{
 protected:
    T cObject;
    _tdecl_ContainerNode(const T &mObj):cObject((T)mObj){}
+   _tdecl_ContainerNode(const Type &mOther):cObject(_(mOther)){}
 public:
    T Dereference() const {return cObject;}
+   _tECompare Equal(_tdecl_ContainerNode<T,Type> &mOther){return cObject==mOther.cObject?_eEqual:cObject<mOther.cObject?_eLess:_eMore;}
    virtual Type* Free()=0;
 };
 ////////////////////////////////////////////////////////////
@@ -24,16 +26,36 @@ class _tdecl_ForwardNode:public _tdecl_ContainerNode<T,Type>{
 protected:
    Type* cNext;
    _tdecl_ForwardNode(const T &mObj,Type* mNext):_tdecl_ContainerNode<T,Type>(mObj),cNext(mNext){}
+   _tdecl_ForwardNode(const Type &mOther):_tdecl_ContainerNode<T,Type>(mOther),cNext(mOther.Next()){}
   ~_tdecl_ForwardNode(){}
 public:
    Type* Next() const {return cNext;}
    Type* Free() override;
+   Type* operator ++();
+   Type* operator ++(int);
 };
 //-------------------------------------------------
 template<typename T,typename Type>
 Type* _tdecl_ForwardNode::Free(){
    Type* ret=cNext;
    delete &this;
+   return ret;
+}
+//-------------------------------------------------
+template<typename T,typename Type>
+Type* operator ++(){
+   if (!cNext) return NULL;
+   cObject=cNext.cObject;
+   cNext=cNext.cNext;
+   return new Type(this);
+}
+//-------------------------------------------------
+template<typename T,typename Type>
+Type* operator ++(int){
+   if (!cNext) return NULL;
+   Type* ret=new Type(this);
+   cObject=cNext.cObject;
+   cNext=cNext.cNext;
    return ret;
 }
 

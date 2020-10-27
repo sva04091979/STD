@@ -14,8 +14,8 @@ protected:
    _tdecl_ForwardIterator(Node* mNode,_tdeclEIteratorType mType):_tdecl_Iterator<Node,T>(mNode,mType){}
    _tdecl_ForwardIterator(const _tdecl_ForwardIterator<Iterator,Node,T> &other):_tdecl_Iterator<Node,T>((_tdecl_Iterator<Node,T>)other){}
 public:
-   Iterator operator ++() const {return Iterator(++cObject);}
-   Iterator operator ++(int) const {return Iterator(cObject++);}
+   Iterator operator ++() {return Iterator(++cPtr);}
+   Iterator operator ++(int) {return Iterator(cPtr++);}
 };
 
 END_SPACE
