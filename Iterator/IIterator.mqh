@@ -1,7 +1,7 @@
 #ifndef _STD_I_ITERATOR_
 #define _STD_I_ITERATOR_
 
-#include <STD\Memory\UniquePtr.mqh>
+#include <STD\Define\StdDefine.mqh>
 
 #define _tEIteratorType __std(EIteratorType)
 
@@ -11,24 +11,24 @@
 NAMESPACE(STD)
 
 template<typename ContainerType,typename Wrape,typename Node,typename T>
-struct _tdecl_Iterator:protected _tdeclUniquePtr<Wrape>{
+struct _tdecl_Iterator{
+   Wrape cWrape;
    ContainerType* cContainer;
 protected:
-   _tdecl_Iterator(Wrape* &mWrape,ContainerType* mContainer):
-      _tdeclUniquePtr<Wrape>(mWrape),cContainer(mContainer){}
+   _tdecl_Iterator(Node* mNode,ContainerType* mContainer):
+      cWrape(mNode),cContainer(mContainer){}
 public:
-   T Dereference() const {return _(cPtr);}
-   Node* GetNode() const {return cPtr.GetNode();}
+   T Dereference() const {return _(cWrape);}
+   Node* GetNode() const {return cWrape.GetNode();}
    ContainerType* Container() const {return cContainer;}
    void operator =(_tdecl_Iterator<ContainerType,Wrape,Node,T> &mOther);
-   bool operator ==(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return cPtr.GetNode().Equal(other.cPtr.GetNode());}
-   bool operator !=(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return !cPtr.GetNode().Equal(other.cPtr.GetNode());}
+   bool operator ==(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return cWrape.GetNode().Equal(other.cWrape.GetNode());}
+   bool operator !=(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return !cWrape.GetNode().Equal(other.cWrape.GetNode());}
 };
 //-----------------------------------------------------------------
 template<typename ContainerType,typename Wrape,typename Node,typename T>
 void _tdecl_Iterator::operator =(_tdecl_Iterator<ContainerType,Wrape,Node,T> &mOther){
-   DEL(cPtr);
-   cPtr=new Wrape(mOther.GetNode());
+   cWrape=mOther.GetNode();
 }
 
 END_SPACE
