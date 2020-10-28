@@ -60,7 +60,7 @@ template<typename T>
 _tdeclForwardIterator<T> _tdeclForwardList::End(){
    static _tdeclForwardNodeEnd<T> endNode;
    _tdeclForwardIterator<T> ret(&endNode,&this);
-   return ret;
+   return _tdeclForwardIterator<T>(&endNode,&this);
 }
 //---------------------------------------------------------
 template<typename T>
