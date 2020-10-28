@@ -4,6 +4,5 @@
 #include "Wrape.mqh"
 #include "UniquePtr.mqh"
 #include "SharedPtr.mqh"
-#include "AutoPtr.mqh"
 
 #endif

@@ -36,6 +36,7 @@ protected:
 public:
    Type* Free() override;
    Type* Next() const {return cNext;}
+   void Next(Type* mNext) {cNext=mNext;}
 };
 //-------------------------------------------------
 template<typename T,typename Type>
