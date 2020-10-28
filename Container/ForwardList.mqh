@@ -7,7 +7,6 @@
 
 #define _tForwardList __std(CForwardList)
 #define _tForwardIterator __std(SForwardIterator)
-#define _tForwardNodeEnd __std(CForwardNodeEnd)
 
 #define _tdeclForwardList __decl(CForwardList)
 #define _tdeclForwardIterator __decl(SForwardIterator)

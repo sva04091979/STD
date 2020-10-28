@@ -3,6 +3,8 @@
 
 #include "IIterator.mqh"
 
+#define _tForwardNode __std(_CForwardWrape)
+
 #define _tdecl_ForwardIterator __decl(_SForwardIterator)
 #define _tdecl_ForwardProxy __decl(_CForwardWrape)
 
@@ -29,7 +31,7 @@ protected:
    _tdecl_ForwardIterator(const Iterator &other):_tdecl_Iterator<_Typenames>(other.GetNode(),other.Container()){}
 public:
    T Next() {return _(cWrape.GetNode().Next());}
-   Iterator operator ++() {++cWrape; return Iterator(cWrape.GetNode(),cContainer);}
+   _tdecl_ForwardProxy<Node,T>* operator ++() {++cWrape; return &cWrape;}
    Iterator operator ++(int) {Iterator ret(cWrape.GetNode(),cContainer); ++cWrape; return ret;}
 };
 
