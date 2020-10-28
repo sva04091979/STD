@@ -3,19 +3,37 @@
 
 #include "IIterator.mqh"
 
+#define _tdecl_ForwardIterator __decl(_SForwardIterator)
+#define _tdecl_ForwardProxy __decl(_CForwardWrape)
+
+#define _Typenames ContainerType,_tdecl_ForwardProxy<Node,T>,Node,T
+
 NAMESPACE(STD)
 
-template<typename IteratorType, typename Iterator,typename T>
-struct IForwardIterator:public IIterator<Iterator,T>{
-protected:
-   IForwardIterator(Iterator* mIterator):IIterator<Iterator,T>(mIterator,FORWARD_ITERATOR){}
-   IForwardIterator(Iterator* mIterator,EIteratorType mType):IIterator<Iterator,T>(mIterator,mType){}
-   IForwardIterator(const IForwardIterator<IteratorType,Iterator,T> &other):IIterator<Iterator,T>((IIterator<Iterator,T>)other){}
+template<typename Node,typename T>
+class _tdecl_ForwardProxy{
+   Node* cNode;
 public:
-   IteratorType operator ++() const {IteratorType ret=IteratorType::Clone(++cObject); return ret;}
-   IteratorType operator ++(int) const {return IteratorType::Clone(cObject++);}
+   _tdecl_ForwardProxy(Node* mNode):cNode(mNode){}
+   T Dereference() {return _(cNode);}
+   Node* GetNode() {return cNode;}
+   void operator ++() {cNode=cNode.Next();}
+   bool IsEnd() {return cNode.IsEnd();}
+};
+
+template<typename ContainerType,typename Iterator, typename Node,typename T>
+struct _tdecl_ForwardIterator:public _tdecl_Iterator<_Typenames>{
+protected:
+   _tdecl_ForwardIterator(Node* mNode,ContainerType* mContainer):_tdecl_Iterator<_Typenames>(_rv((new _tdecl_ForwardProxy<Node,T>(mNode))),mContainer){}
+   _tdecl_ForwardIterator(const Iterator &other):_tdecl_Iterator<_Typenames>(_rv((new _tdecl_ForwardProxy<Node,T>(other.GetNode()))),other.Container()){}
+public:
+   T Next() {return _(cPtr.GetNode().Next());}
+   Iterator operator ++() {++cPtr; return Iterator(cPtr.GetNode(),cContainer);}
+   Iterator operator ++(int) {Iterator ret(cPtr.GetNode(),cContainer); ++cPtr; return ret;}
 };
 
 END_SPACE
+
+#undef _Typenames
 
 #endif
