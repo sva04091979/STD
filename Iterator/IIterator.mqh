@@ -16,16 +16,18 @@ struct _tdecl_Iterator{
    ContainerType* cContainer;
 protected:
    _tdecl_Iterator(Node* mNode,ContainerType* mContainer):
-      cWrape(mNode),cContainer(mContainer){}
+   cWrape(mNode),cContainer(mContainer){}
+protected:
+   Node* GetNode() const {return cWrape.GetNode();}
 public:
    T Dereference() const {return _(cWrape);}
-   Node* GetNode() const {return cWrape.GetNode();}
    ContainerType* Container() const {return cContainer;}
    void operator =(_tdecl_Iterator<ContainerType,Wrape,Node,T> &mOther);
    bool operator ==(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return cWrape.GetNode().Equal(other.cWrape.GetNode());}
    bool operator !=(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return !cWrape.GetNode().Equal(other.cWrape.GetNode());}
    bool operator ==(const Node* mNode) {return cWrape.GetNode().Equal(mNode);}
    bool operator !=(const Node* mNode) {return !cWrape.GetNode().Equal(mNode);}
+   bool IsEnd() {return cWrape.GetNode().IsEnd();}
 };
 //-----------------------------------------------------------------
 template<typename ContainerType,typename Wrape,typename Node,typename T>

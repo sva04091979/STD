@@ -28,7 +28,7 @@ template<typename ContainerType,typename Iterator, typename Node,typename T>
 struct _tdecl_ForwardIterator:public _tdecl_Iterator<_Typenames>{
 protected:
    _tdecl_ForwardIterator(Node* mNode,ContainerType* mContainer):_tdecl_Iterator<_Typenames>(mNode,mContainer){}
-   _tdecl_ForwardIterator(const Iterator &other):_tdecl_Iterator<_Typenames>(other.GetNode(),other.Container()){}
+   _tdecl_ForwardIterator(const Iterator &other):_tdecl_Iterator<_Typenames>(_tdecl_ForwardIterator<ContainerType,Iterator,Node,T>(other).GetNode(),other.Container()){}
 public:
    T Next() {return _(cWrape.GetNode().Next());}
    _tdecl_ForwardProxy<Node,T>* operator ++() {++cWrape; return &cWrape;}
