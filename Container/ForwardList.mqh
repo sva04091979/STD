@@ -17,6 +17,8 @@ NAMESPACE(STD)
 
 template<typename T>
 class _tdeclForwardNode:public _tdecl_ForwardNode<T,_tdeclForwardNode<T>>{
+protected:
+  ~_tdeclForwardNode(){}
 public:
    _tdeclForwardNode():_tdecl_ForwardNode<T,_tdeclForwardNode<T>>(){}
    _tdeclForwardNode(const T &mObj,_tdeclForwardNode<T>* mNext):_tdecl_ForwardNode<T,_tdeclForwardNode<T>>(mObj,mNext){}
@@ -92,8 +94,7 @@ _tdeclForwardIterator<T> _tdeclForwardList::EraceNext(_tdeclForwardIterator<T> &
    --cSize;
    _tdeclForwardNode<T>* node=mIt.GetNode();
    _tdeclForwardNode<T>* _node=node.Next();
-   node.Next(_node.Next());
-   delete _node;
+   node.Next(_node.Free());
    _tdeclForwardIterator<T> ret(node.Next(),&this);
    return ret;
 }

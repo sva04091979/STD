@@ -15,13 +15,15 @@ NAMESPACE(STD)
 template<typename Node,typename T>
 class _tdecl_ForwardProxy{
    Node* cNode;
+   Node* GetNode() const {return cNode;}
 public:
    _tdecl_ForwardProxy(Node* mNode):cNode(mNode){}
    T Dereference() const {return _(cNode);}
-   Node* GetNode() const {return cNode;}
    void operator ++() {cNode=cNode.Next();}
-   bool IsEnd() {return cNode.IsEnd();}
    void operator =(Node* mNode) {cNode=mNode;}
+   bool IsEnd() {return cNode.IsEnd();}
+   bool operator ==(const _tdecl_ForwardProxy<Node,T> &mOther) {return cNode==mOther.cNode;}
+   bool operator !=(const _tdecl_ForwardProxy<Node,T> &mOther) {return cNode!=mOther.cNode;}
 };
 
 template<typename ContainerType,typename Iterator, typename Node,typename T>

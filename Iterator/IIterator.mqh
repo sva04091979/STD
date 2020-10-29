@@ -10,29 +10,29 @@
 
 NAMESPACE(STD)
 
-template<typename ContainerType,typename Wrape,typename Node,typename T>
+template<typename ContainerType,typename WrapeType,typename Node,typename T>
 struct _tdecl_Iterator{
-   Wrape cWrape;
+   WrapeType cWrape;
    ContainerType* cContainer;
 protected:
    _tdecl_Iterator(Node* mNode,ContainerType* mContainer):
    cWrape(mNode),cContainer(mContainer){}
-protected:
-   Node* GetNode() const {return cWrape.GetNode();}
+public:
+   WrapeType* Wrape() {return &cWrape;}
 public:
    T Dereference() const {return _(cWrape);}
    ContainerType* Container() const {return cContainer;}
-   void operator =(_tdecl_Iterator<ContainerType,Wrape,Node,T> &mOther);
-   bool operator ==(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return cWrape.GetNode().Equal(other.cWrape.GetNode());}
-   bool operator !=(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return !cWrape.GetNode().Equal(other.cWrape.GetNode());}
-   bool operator ==(const Node* mNode) {return cWrape.GetNode().Equal(mNode);}
-   bool operator !=(const Node* mNode) {return !cWrape.GetNode().Equal(mNode);}
-   bool IsEnd() {return cWrape.GetNode().IsEnd();}
+   void operator =(_tdecl_Iterator<ContainerType,WrapeType,Node,T> &mOther);
+   bool operator ==(_tdecl_Iterator<ContainerType,WrapeType,Node,T> &other) {return cWrape==other.cWrape;}
+   bool operator !=(_tdecl_Iterator<ContainerType,WrapeType,Node,T> &other) {return cWrape!=other.cWrape;}
+   bool operator ==(const WrapeType &mWrape) {return cWrape==mWrape;}
+   bool operator !=(const WrapeType &mWrape) {return cWrape!=mWrape;}
+   bool IsEnd() {return cWrape.IsEnd();}
 };
 //-----------------------------------------------------------------
-template<typename ContainerType,typename Wrape,typename Node,typename T>
-void _tdecl_Iterator::operator =(_tdecl_Iterator<ContainerType,Wrape,Node,T> &mOther){
-   cWrape=mOther.GetNode();
+template<typename ContainerType,typename WrapeType,typename Node,typename T>
+void _tdecl_Iterator::operator =(_tdecl_Iterator<ContainerType,WrapeType,Node,T> &mOther){
+   cWrape=mOther.Wrape();
 }
 
 END_SPACE
