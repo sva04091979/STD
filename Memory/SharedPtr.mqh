@@ -60,7 +60,7 @@ void _tdeclSharedPtr::operator =(T* ptr){
    if (cObject==ptr) return;
    if (cCount!=NULL&&!--cCount) {delete cObject; delete cCount;}
    cObject=ptr;
-   cCount=!ptr?NULL:new CWrapeNumeric<_tSizeT>(1);
+   cCount=!ptr?NULL:new _tCounter(1);
 }
 
 END_SPACE

@@ -20,9 +20,9 @@ protected:
   ~_tdecl_ContainerNode(){}
 public:
    T Dereference() const {return cObject;}
-   virtual bool Equal(Type &mOther){return !mOther.IsEnd()&&cObject==_(mOther);}
+   virtual bool Equal(const Type &mOther){return !mOther.IsEnd()&&cObject==_(mOther);}
    virtual Type* Free()=0;
-   virtual bool IsEnd() {return false;}
+   virtual bool IsEnd() const {return false;}
 };
 ////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////

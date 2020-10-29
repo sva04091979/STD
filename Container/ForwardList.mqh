@@ -7,7 +7,6 @@
 
 #define _tForwardList __std(CForwardList)
 #define _tForwardIterator __std(SForwardIterator)
-#define _tForwardNodeEnd __std(CForwardNodeEnd)
 
 #define _tdeclForwardList __decl(CForwardList)
 #define _tdeclForwardIterator __decl(SForwardIterator)
@@ -28,8 +27,8 @@ template<typename T>
 class _tdeclForwardNodeEnd:public _tdeclForwardNode<T>{
 public:
    _tdeclForwardNodeEnd():_tdeclForwardNode<T>(){}
-   bool IsEnd() override {return true;}
-   bool Equal(_tdeclForwardNode<T> &mOther) override {return mOther.IsEnd();}
+   bool IsEnd() override const {return true;}
+   bool Equal(const _tdeclForwardNode<T> &mOther) override {return mOther.IsEnd();}
 };
 
 template<typename T>
@@ -45,10 +44,10 @@ class _tdeclForwardList:public _tdeclContainer{
 protected:
    _tdeclForwardNode<T>* cFront;
 public:
-   _tdeclForwardList():cFront(End().GetNode()){}
+   _tdeclForwardList():cFront(End()){}
   ~_tdeclForwardList() {while (!cFront.IsEnd()!=NULL) cFront=cFront.Free();}
-   _tdeclForwardIterator<T> Begin() {return _tdeclForwardIterator<T>(cFront,&this);}
-   _tdeclForwardIterator<T> End();
+   _tdeclForwardIterator<T> Begin() {_tdeclForwardIterator<T> ret(cFront,&this); return ret;}
+   _tdeclForwardNodeEnd<T>* End();
    _tdeclForwardIterator<T> EraceNext(_tdeclForwardIterator<T> &mIt);
    T Front() const {return _(cFront);}
    void PushFront(T &obj);
@@ -57,16 +56,15 @@ public:
 };
 //---------------------------------------------------------
 template<typename T>
-_tdeclForwardIterator<T> _tdeclForwardList::End(){
+_tdeclForwardNodeEnd<T>* _tdeclForwardList::End(){
    static _tdeclForwardNodeEnd<T> endNode;
-   _tdeclForwardIterator<T> ret(&endNode,&this);
-   return _tdeclForwardIterator<T>(&endNode,&this);
+   return &endNode;
 }
 //---------------------------------------------------------
 template<typename T>
 void _tdeclForwardList::PushFront(T &obj){
    ++cSize;
-   cFront=new CForwardNode<T>(obj,cFront);}
+   cFront=new _tdeclForwardNode<T>(obj,cFront);}
 //----------------------------------------------------------
 template<typename T>
 T _tdeclForwardList::PopFront(){
@@ -96,7 +94,8 @@ _tdeclForwardIterator<T> _tdeclForwardList::EraceNext(_tdeclForwardIterator<T> &
    _tdeclForwardNode<T>* _node=node.Next();
    node.Next(_node.Next());
    delete _node;
-   return _tdeclForwardIterator<T>(node.Next(),&this);
+   _tdeclForwardIterator<T> ret(node.Next(),&this);
+   return ret;
 }
 
 template<typename T>
