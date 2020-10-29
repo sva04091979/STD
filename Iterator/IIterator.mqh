@@ -24,6 +24,8 @@ public:
    void operator =(_tdecl_Iterator<ContainerType,Wrape,Node,T> &mOther);
    bool operator ==(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return cWrape.GetNode().Equal(other.cWrape.GetNode());}
    bool operator !=(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return !cWrape.GetNode().Equal(other.cWrape.GetNode());}
+   bool operator ==(const Node* mNode) {return cWrape.GetNode().Equal(mNode);}
+   bool operator !=(const Node* mNode) {return !cWrape.GetNode().Equal(mNode);}
 };
 //-----------------------------------------------------------------
 template<typename ContainerType,typename Wrape,typename Node,typename T>
