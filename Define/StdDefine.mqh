@@ -97,9 +97,11 @@ enum _tdeclECompare{
 
 #define _eUp __std(UP)
 #define _eDown __std(DOWN)
+#define _eNoDirect __std(NO_DIRECT)
 enum _tdeclEDirect{
-   __decl(UP)=1,
-   __decl(DOWN)=-1
+   __decl(DOWN)=-1,
+   __decl(NO_DIRECT)=0,
+   __decl(UP)=1
 };
 
 template<typename T>
