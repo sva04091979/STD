@@ -20,6 +20,8 @@
 #define EQUITY AccountInfoDouble(ACCOUNT_EQUITY)
 #define BALLANCE AccountInfoDouble(ACCOUNT_BALANCE)
 #define TOTAL_PROFIT AccountInfoDouble(ACCOUNT_PROFIT)
+#define FREE_MARGIN AccountInfoDouble(ACCOUNT_MARGIN_FREE)
+#define MARGIN_LEVEL AccountInfoDouble(ACCOUNT_MARGIN_LEVEL)
 #define ASK SymbolInfoDouble(NULL,SYMBOL_ASK)
 #define BID SymbolInfoDouble(NULL,SYMBOL_BID)
 #define OPEN(i) iOpen(NULL,PERIOD_CURRENT,i)
@@ -97,9 +99,11 @@ enum _tdeclECompare{
 
 #define _eUp __std(UP)
 #define _eDown __std(DOWN)
+#define _eNoDirect __std(NO_DIRECT)
 enum _tdeclEDirect{
-   __decl(UP)=1,
-   __decl(DOWN)=-1
+   __decl(DOWN)=-1,
+   __decl(NO_DIRECT)=0,
+   __decl(UP)=1
 };
 
 template<typename T>
