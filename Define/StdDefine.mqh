@@ -20,6 +20,8 @@
 #define EQUITY AccountInfoDouble(ACCOUNT_EQUITY)
 #define BALLANCE AccountInfoDouble(ACCOUNT_BALANCE)
 #define TOTAL_PROFIT AccountInfoDouble(ACCOUNT_PROFIT)
+#define FREE_MARGIN AccountInfoDouble(ACCOUNT_MARGIN_FREE)
+#define MARGIN_LEVEL AccountInfoDouble(ACCOUNT_MARGIN_LEVEL)
 #define ASK SymbolInfoDouble(NULL,SYMBOL_ASK)
 #define BID SymbolInfoDouble(NULL,SYMBOL_BID)
 #define OPEN(i) iOpen(NULL,PERIOD_CURRENT,i)
