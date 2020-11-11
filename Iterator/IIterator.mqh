@@ -15,10 +15,12 @@ struct _tdecl_Iterator{
    WrapeType cWrape;
    ContainerType* cContainer;
 protected:
+   _tdecl_Iterator(const WrapeType* mWrape,ContainerType* mContainer):
+      cWrape(mWrape),cContainer(mContainer){}
    _tdecl_Iterator(Node* mNode,ContainerType* mContainer):
-   cWrape(mNode),cContainer(mContainer){}
+      cWrape(mNode),cContainer(mContainer){}
 public:
-   WrapeType* Wrape() {return &cWrape;}
+   const WrapeType* Wrape() const {return &cWrape;}
 public:
    T Dereference() const {return _(cWrape);}
    ContainerType* Container() const {return cContainer;}
