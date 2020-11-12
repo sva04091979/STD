@@ -10,30 +10,28 @@
 
 NAMESPACE(STD)
 
-template<typename ContainerType,typename WrapeType,typename Node,typename T>
+template<typename ContainerType,typename WrapeType,typename NodeType,typename T>
 struct _tdecl_Iterator{
    WrapeType cWrape;
-   ContainerType* cContainer;
 protected:
-   _tdecl_Iterator(const WrapeType* mWrape,ContainerType* mContainer):
-      cWrape(mWrape),cContainer(mContainer){}
-   _tdecl_Iterator(Node* mNode,ContainerType* mContainer):
-      cWrape(mNode),cContainer(mContainer){}
+   _tdecl_Iterator(const WrapeType* mWrape):
+      cWrape(mWrape){}
+   _tdecl_Iterator(NodeType* mNode,ContainerType* mContainer):
+      cWrape(mContainer,mNode){}
 public:
    const WrapeType* Wrape() const {return &cWrape;}
 public:
    T Dereference() const {return _(cWrape);}
-   ContainerType* Container() const {return cContainer;}
-   void operator =(_tdecl_Iterator<ContainerType,WrapeType,Node,T> &mOther);
-   bool operator ==(_tdecl_Iterator<ContainerType,WrapeType,Node,T> &other) {return cWrape==other.cWrape;}
-   bool operator !=(_tdecl_Iterator<ContainerType,WrapeType,Node,T> &other) {return cWrape!=other.cWrape;}
+   void operator =(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &mOther);
+   bool operator ==(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &other) {return cWrape==other.cWrape;}
+   bool operator !=(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &other) {return cWrape!=other.cWrape;}
    bool operator ==(const WrapeType &mWrape) {return cWrape==mWrape;}
    bool operator !=(const WrapeType &mWrape) {return cWrape!=mWrape;}
    bool IsEnd() {return cWrape.IsEnd();}
 };
 //-----------------------------------------------------------------
-template<typename ContainerType,typename WrapeType,typename Node,typename T>
-void _tdecl_Iterator::operator =(_tdecl_Iterator<ContainerType,WrapeType,Node,T> &mOther){
+template<typename ContainerType,typename WrapeType,typename NodeType,typename T>
+void _tdecl_Iterator::operator =(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &mOther){
    cWrape=mOther.Wrape();
 }
 

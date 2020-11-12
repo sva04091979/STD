@@ -8,36 +8,36 @@
 #define _tdecl_ForwardIterator __decl(_SForwardIterator)
 #define _tdecl_ForwardProxy __decl(_CForwardWrape)
 
-#define _Typenames ContainerType,_tdecl_ForwardProxy<Node,T>,Node,T
+#define _Typenames ContainerType,_tdecl_ForwardProxy<ContainerType,NodeType,T>,NodeType,T
 
 NAMESPACE(STD)
 
-template<typename Node,typename T>
+template<typename ContainerType,typename NodeType,typename T>
 class _tdecl_ForwardProxy{
-   Node* cNode;
-   Node* GetNode() const {return cNode;}
+   ContainerType* cContainer;
+   NodeType* cNode;
 public:
-   _tdecl_ForwardProxy(const _tdecl_ForwardProxy<Node,T> &mWrape):cNode(mWrape.cNode){}
-   _tdecl_ForwardProxy(Node* mNode):cNode(mNode){}
+   _tdecl_ForwardProxy(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther){this=mOther;}
+   _tdecl_ForwardProxy(ContainerType* mContainer,NodeType* mNode):cContainer(mContainer),cNode(mNode){}
    T Dereference() const {return _(cNode);}
-   Node* Next() {return cNode.Next();}
-   Node* It() {return cNode;}
+   NodeType* Next() {return cNode.Next();}
+   NodeType* It() {return cNode;}
    void operator ++() {cNode=cNode.Next();}
-   void operator =(Node* mNode) {cNode=mNode;}
+   void operator =(NodeType* mNode) {cNode=mNode;}
    bool IsEnd() {return cNode.IsEnd();}
-   bool operator ==(const _tdecl_ForwardProxy<Node,T> &mOther) {return cNode==mOther.cNode;}
-   bool operator !=(const _tdecl_ForwardProxy<Node,T> &mOther) {return cNode!=mOther.cNode;}
+   bool operator ==(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther) {return cContainer==mOther.cContainer&&cNode==mOther.cNode;}
+   bool operator !=(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther) {return cContainer!=mOther.cContainer||cNode!=mOther.cNode;}
 };
 
-template<typename ContainerType,typename Iterator, typename Node,typename T>
+template<typename ContainerType,typename Iterator, typename NodeType,typename T>
 struct _tdecl_ForwardIterator:public _tdecl_Iterator<_Typenames>{
 protected:
-   _tdecl_ForwardIterator(Node* mNode,ContainerType* mContainer):_tdecl_Iterator<_Typenames>(mNode,mContainer){}
-   _tdecl_ForwardIterator(const Iterator &other):_tdecl_Iterator<_Typenames>(other.Wrape(),other.Container()){}
+   _tdecl_ForwardIterator(NodeType* mNode,ContainerType* mContainer):_tdecl_Iterator<_Typenames>(mNode,mContainer){}
+   _tdecl_ForwardIterator(const Iterator &other):_tdecl_Iterator<_Typenames>(other.Wrape()){}
 public:
    T Next() {return _(cWrape.Next());}
-   _tdecl_ForwardProxy<Node,T>* operator ++() {++cWrape; return &cWrape;}
-   _tdecl_ForwardProxy<Node,T>* operator ++(int) {_tdecl_ForwardProxy<Node,T>* ret(cWrape,cContainer); ++cWrape; return ret;}
+   _tdecl_ForwardProxy<ContainerType,NodeType,T>* operator ++() {++cWrape; return &cWrape;}
+   _tdecl_ForwardProxy<ContainerType,NodeType,T> operator ++(int) {_tdecl_ForwardProxy<ContainerType,NodeType,T> ret(cWrape); ++cWrape; return ret;}
 };
 
 END_SPACE
