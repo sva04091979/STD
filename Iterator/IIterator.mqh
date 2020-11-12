@@ -20,6 +20,7 @@ protected:
       cWrape(mContainer,mNode){}
 public:
    const WrapeType* Wrape() const {return &cWrape;}
+   bool CheckContainer(ContainerType &mContainer) {return cWrape.CheckContainer(mContainer);}
 public:
    T Dereference() const {return _(cWrape);}
    void operator =(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &mOther);

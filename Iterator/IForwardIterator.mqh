@@ -19,23 +19,30 @@ class _tdecl_ForwardProxy{
 public:
    _tdecl_ForwardProxy(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther){this=mOther;}
    _tdecl_ForwardProxy(ContainerType* mContainer,NodeType* mNode):cContainer(mContainer),cNode(mNode){}
+   _tdecl_ForwardProxy<ContainerType,NodeType,T> EraceNext() const;
    T Dereference() const {return _(cNode);}
-   NodeType* Next() {return cNode.Next();}
-   NodeType* It() {return cNode;}
    void operator ++() {cNode=cNode.Next();}
    void operator =(NodeType* mNode) {cNode=mNode;}
+   bool CheckContainer(const ContainerType &mContainer) {return &mContainer==cContainer;}
    bool IsEnd() {return cNode.IsEnd();}
    bool operator ==(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther) {return cContainer==mOther.cContainer&&cNode==mOther.cNode;}
    bool operator !=(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther) {return cContainer!=mOther.cContainer||cNode!=mOther.cNode;}
 };
-
+//---------------------------------------------------------------------------------------------
+template<typename ContainerType,typename NodeType,typename T>
+_tdecl_ForwardProxy<ContainerType,NodeType,T> _tdecl_ForwardProxy::EraceNext() const{
+   NodeType* next=cNode.Next();
+   _tdecl_ForwardProxy<ContainerType,NodeType,T> ret(cContainer,next);
+   return ret;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
 template<typename ContainerType,typename Iterator, typename NodeType,typename T>
 struct _tdecl_ForwardIterator:public _tdecl_Iterator<_Typenames>{
 protected:
    _tdecl_ForwardIterator(NodeType* mNode,ContainerType* mContainer):_tdecl_Iterator<_Typenames>(mNode,mContainer){}
    _tdecl_ForwardIterator(const Iterator &other):_tdecl_Iterator<_Typenames>(other.Wrape()){}
 public:
-   T Next() {return _(cWrape.Next());}
    _tdecl_ForwardProxy<ContainerType,NodeType,T>* operator ++() {++cWrape; return &cWrape;}
    _tdecl_ForwardProxy<ContainerType,NodeType,T> operator ++(int) {_tdecl_ForwardProxy<ContainerType,NodeType,T> ret(cWrape); ++cWrape; return ret;}
 };
