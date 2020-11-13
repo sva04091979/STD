@@ -48,6 +48,7 @@ protected:
    _tdeclForwardNode<T>* cFront;
 public:
    _tdeclForwardList():cEnd(&this,EndNode()),cFront(EndNode()){}
+   _tdeclForwardList(T &arr[]);
   ~_tdeclForwardList() {while (!cFront.IsEnd()!=NULL) cFront=cFront.Free();}
    _tdeclForwardIterator<T> Begin() {_tdeclForwardIterator<T> ret(cFront,&this); return ret;}
    const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T>* End() const {return &cEnd;}
@@ -65,6 +66,12 @@ protected:
       return &instance;
    }
 };
+//---------------------------------------------------------
+template<typename T>
+_tdeclForwardList::_tdeclForwardList(T &arr[]):
+   cEnd(&this,EndNode()),cFront(EndNode()){
+   for (uint i=0,count=ArraySize(arr);i<count;PushFront(arr[i++]));
+}
 //---------------------------------------------------------
 template<typename T>
 void _tdeclForwardList::PushFront(T &obj){
