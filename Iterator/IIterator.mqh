@@ -24,6 +24,7 @@ public:
 public:
    T Dereference() const {return _(cWrape);}
    void operator =(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &mOther);
+   void operator =(WrapeType &mWrape) {cWrape=mWrape;}
    bool operator ==(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &other) {return cWrape==other.cWrape;}
    bool operator !=(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &other) {return cWrape!=other.cWrape;}
    bool operator ==(const WrapeType &mWrape) {return cWrape==mWrape;}

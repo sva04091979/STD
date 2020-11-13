@@ -51,7 +51,10 @@ public:
   ~_tdeclForwardList() {while (!cFront.IsEnd()!=NULL) cFront=cFront.Free();}
    _tdeclForwardIterator<T> Begin() {_tdeclForwardIterator<T> ret(cFront,&this); return ret;}
    const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T>* End() const {return &cEnd;}
-   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceNext(_tdeclForwardIterator<T> &mIt);
+   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceNext(_tdeclForwardIterator<T> &mIt) {return EraceNext(mIt.Wrape());}
+//   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceNext(_tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape){
+//      return EraceNext(&mWrape);}
+   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceNext(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape);
    T Front() const {return _(cFront);}
    void PushFront(T &obj);
    T PopFront();
@@ -88,6 +91,7 @@ void _tdeclForwardList::Swap(_tdeclForwardList<T> &mOther){
    mOther.cFront=front;
 }
 //------------------------------------------------------------
+/*
 template<typename T>
 _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> _tdeclForwardList::EraceNext(_tdeclForwardIterator<T> &mIt){
    if (!mIt.CheckContainer(this)) {int _tmp=0,tmp=1/_tmp;}
@@ -96,7 +100,17 @@ _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> _tdeclForwardLi
       --cSize;
       return mIt.Wrape().EraceNext();}
 }
-
+*/
+//--------------------------------------------------------------
+template<typename T>
+_tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> _tdeclForwardList::EraceNext(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape){
+   if (!mWrape.CheckContainer(this)) {int _tmp=0,tmp=1/_tmp;}
+   if (mWrape.IsEnd()) return mWrape;
+   else{
+      --cSize;
+      return mWrape.EraceNext();}
+}
+//--------------------------------------------------------------
 template<typename T>
 void _fdeclSwap(_tdeclForwardList<T> &fFirst,_tdeclForwardList<T> &fSecond){
    fFirst.Swap(fSecond);

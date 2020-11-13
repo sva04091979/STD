@@ -23,15 +23,15 @@ public:
    T Dereference() const {return _(cNode);}
    void operator ++() {cNode=cNode.Next();}
    void operator =(NodeType* mNode) {cNode=mNode;}
-   bool CheckContainer(const ContainerType &mContainer) {return &mContainer==cContainer;}
-   bool IsEnd() {return cNode.IsEnd();}
+   bool CheckContainer(const ContainerType &mContainer) const {return &mContainer==cContainer;}
+   bool IsEnd() const {return cNode.IsEnd();}
    bool operator ==(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther) {return cContainer==mOther.cContainer&&cNode==mOther.cNode;}
    bool operator !=(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther) {return cContainer!=mOther.cContainer||cNode!=mOther.cNode;}
 };
 //---------------------------------------------------------------------------------------------
 template<typename ContainerType,typename NodeType,typename T>
 _tdecl_ForwardProxy<ContainerType,NodeType,T> _tdecl_ForwardProxy::EraceNext() const{
-   NodeType* next=cNode.Next();
+   NodeType* next=cNode.EraceNext();
    _tdecl_ForwardProxy<ContainerType,NodeType,T> ret(cContainer,next);
    return ret;
 }

@@ -36,6 +36,7 @@ protected:
 public:
    Type* Free() override;
    Type* Next() const {return cNext;}
+   Type* EraceNext();
    void Next(Type* mNext) {cNext=mNext;}
 };
 //-------------------------------------------------
@@ -44,6 +45,12 @@ Type* _tdecl_ForwardNode::Free(){
    Type* ret=cNext;
    delete &this;
    return ret;
+}
+//-------------------------------------------------
+template<typename T,typename Type>
+Type* _tdecl_ForwardNode::EraceNext(){
+   cNext=cNext.Free();
+   return cNext;
 }
 
 END_SPACE
