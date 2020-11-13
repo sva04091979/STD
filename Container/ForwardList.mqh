@@ -44,24 +44,24 @@ struct _tdeclForwardIterator:public _tdecl_ForwardIterator<_tdeclForwardList<T>,
 template<typename T>
 class _tdeclForwardList:public _tdeclContainer{
 protected:
+   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> cEnd;
    _tdeclForwardNode<T>* cFront;
 public:
-   _tdeclForwardList():cFront(End()){}
+   _tdeclForwardList():cEnd(&this,EndNode()),cFront(EndNode()){}
   ~_tdeclForwardList() {while (!cFront.IsEnd()!=NULL) cFront=cFront.Free();}
    _tdeclForwardIterator<T> Begin() {_tdeclForwardIterator<T> ret(cFront,&this); return ret;}
-   _tdeclForwardNodeEnd<T>* End();
+   const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T>* End() const {return &cEnd;}
    _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceNext(_tdeclForwardIterator<T> &mIt);
    T Front() const {return _(cFront);}
    void PushFront(T &obj);
    T PopFront();
    void Swap(_tdeclForwardList<T> &mOther);
+protected:
+   static _tdeclForwardNodeEnd<T>* EndNode(){
+      static _tdeclForwardNodeEnd<T> instance;
+      return &instance;
+   }
 };
-//---------------------------------------------------------
-template<typename T>
-_tdeclForwardNodeEnd<T>* _tdeclForwardList::End(){
-   static _tdeclForwardNodeEnd<T> endNode;
-   return &endNode;
-}
 //---------------------------------------------------------
 template<typename T>
 void _tdeclForwardList::PushFront(T &obj){
@@ -92,7 +92,9 @@ template<typename T>
 _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> _tdeclForwardList::EraceNext(_tdeclForwardIterator<T> &mIt){
    if (!mIt.CheckContainer(this)) {int _tmp=0,tmp=1/_tmp;}
    if (mIt.IsEnd()) return mIt.Wrape();
-   else return mIt.Wrape().EraceNext();
+   else{
+      --cSize;
+      return mIt.Wrape().EraceNext();}
 }
 
 template<typename T>
