@@ -45,6 +45,8 @@
 #define _p(dPtr) dPtr.OverloadPtr()
 #define __sf StringFormat
 
+#define ABORT(dText) __std(Abort)(__FILE__,__LINE__,dText)
+
 #define MINUTE          60
 #define HOUR            3600
 #define DAY             86400
@@ -84,9 +86,12 @@
 #define _fSwap __std(Swap)
 #define _fdeclSwap __decl(Swap)
 
-
-
 NAMESPACE(STD)
+
+void __decl(Abort)(string mFile,int mLine,string mText){
+   PrintFormat("Abort at file %s, line %i, reason: \"%s\"",mFile,mLine,mText);
+   int __a=0;
+   int __b=1/__a;}
 
 #define _eLess __std(LESS)
 #define _eEqual __std(EQUAL)
