@@ -10,27 +10,31 @@
 
 NAMESPACE(STD)
 
-template<typename ContainerType,typename Wrape,typename Node,typename T>
+template<typename ContainerType,typename WrapeType,typename NodeType,typename T>
 struct _tdecl_Iterator{
-   Wrape cWrape;
-   ContainerType* cContainer;
+   WrapeType cWrape;
 protected:
-   _tdecl_Iterator(Node* mNode,ContainerType* mContainer):
-      cWrape(mNode),cContainer(mContainer){}
+   _tdecl_Iterator(const WrapeType* mWrape):
+      cWrape(mWrape){}
+   _tdecl_Iterator(NodeType* mNode,ContainerType* mContainer):
+      cWrape(mContainer,mNode){}
+public:
+   const WrapeType* Wrape() const {return &cWrape;}
+   bool CheckContainer(ContainerType &mContainer) {return cWrape.CheckContainer(mContainer);}
 public:
    T Dereference() const {return _(cWrape);}
-   Node* GetNode() const {return cWrape.GetNode();}
-   ContainerType* Container() const {return cContainer;}
-   void operator =(_tdecl_Iterator<ContainerType,Wrape,Node,T> &mOther);
-   bool operator ==(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return cWrape.GetNode().Equal(other.cWrape.GetNode());}
-   bool operator !=(_tdecl_Iterator<ContainerType,Wrape,Node,T> &other) {return !cWrape.GetNode().Equal(other.cWrape.GetNode());}
-   bool operator ==(const Node* mNode) {return cWrape.GetNode().Equal(mNode);}
-   bool operator !=(const Node* mNode) {return !cWrape.GetNode().Equal(mNode);}
+   void operator =(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &mOther);
+   void operator =(WrapeType &mWrape) {cWrape=mWrape;}
+   bool operator ==(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &other) {return cWrape==other.cWrape;}
+   bool operator !=(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &other) {return cWrape!=other.cWrape;}
+   bool operator ==(const WrapeType &mWrape) {return cWrape==mWrape;}
+   bool operator !=(const WrapeType &mWrape) {return cWrape!=mWrape;}
+   bool IsEnd() {return cWrape.IsEnd();}
 };
 //-----------------------------------------------------------------
-template<typename ContainerType,typename Wrape,typename Node,typename T>
-void _tdecl_Iterator::operator =(_tdecl_Iterator<ContainerType,Wrape,Node,T> &mOther){
-   cWrape=mOther.GetNode();
+template<typename ContainerType,typename WrapeType,typename NodeType,typename T>
+void _tdecl_Iterator::operator =(_tdecl_Iterator<ContainerType,WrapeType,NodeType,T> &mOther){
+   cWrape=mOther.Wrape();
 }
 
 END_SPACE
