@@ -38,6 +38,7 @@ public:
    Type* Next() const {return cNext;}
    Type* EraceNext();
    void Next(Type* mNext) {cNext=mNext;}
+   bool IsLast() {return cNext!=NULL&&cNext.IsEnd();}
 };
 //-------------------------------------------------
 template<typename T,typename Type>

@@ -50,15 +50,18 @@ public:
    _tdeclForwardList():cEnd(&this,EndNode()),cFront(EndNode()){}
    _tdeclForwardList(T &mArr[]);
    _tdeclForwardList(_tdeclForwardList<T> &mOther);
-  ~_tdeclForwardList() {while (!cFront.IsEnd()!=NULL) cFront=cFront.Free();}
+  ~_tdeclForwardList() {Clear();}
    _tdeclForwardIterator<T> Begin() {_tdeclForwardIterator<T> ret(cFront,&this); return ret;}
    const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T>* End() const {return &cEnd;}
-   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceAfter(_tdeclForwardIterator<T> &mIt) {return EraceAfter(mIt.Wrape());}
+   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceAfter(const _tdeclForwardIterator<T> &mIt) {return EraceAfter(mIt.Wrape());}
    _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape);
    T Front() const {return _(cFront);}
    void PushFront(T &obj);
    T PopFront();
    void Swap(_tdeclForwardList<T> &mOther);
+   void Clear();
+   void ClearAfter(const _tdeclForwardIterator<T> &mIt) {ClearAfter(mIt.Wrape());}
+   void ClearAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape);
 protected:
    static _tdeclForwardNodeEnd<T>* EndNode(){
       static _tdeclForwardNodeEnd<T> instance;
@@ -126,10 +129,27 @@ void _tdeclForwardList::Swap(_tdeclForwardList<T> &mOther){
 template<typename T>
 _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> _tdeclForwardList::EraceAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape){
    if (!mWrape.CheckContainer(this)) {ABORT("Wrong container");}
-   if (mWrape.IsEnd()) return mWrape;
+   if (mWrape.IsEnd()||mWrape.IsLast()) return mWrape;
    else{
       --cSize;
       return mWrape.EraceNext();}
+}
+//-------------------------------------------------------------------------------
+template<typename T>
+void _tdeclForwardList::Clear(){
+   cSize=0;
+   while (!cFront.IsEnd()) cFront=cFront.Free();
+}
+//--------------------------------------------------------------
+template<typename T>
+void _tdeclForwardList::ClearAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape){
+   if (!mWrape.CheckContainer(this)) {ABORT("Wrong container");}
+   if (mWrape.IsEnd()||mWrape.IsLast()) return;
+   else{
+      --cSize;
+      for(_tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> wrape=mWrape.EraceNext();
+          !wrape.IsEnd();
+          wrape=mWrape.EraceNext()) --cSize;}
 }
 //--------------------------------------------------------------
 template<typename T>

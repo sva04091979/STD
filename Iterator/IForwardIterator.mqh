@@ -25,6 +25,7 @@ public:
    void operator =(NodeType* mNode) {cNode=mNode;}
    bool CheckContainer(const ContainerType &mContainer) const {return &mContainer==cContainer;}
    bool IsEnd() const {return cNode.IsEnd();}
+   bool IsLast() const {return cNode.IsLast();}
    bool operator ==(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther) {return cContainer==mOther.cContainer&&cNode==mOther.cNode;}
    bool operator !=(const _tdecl_ForwardProxy<ContainerType,NodeType,T> &mOther) {return cContainer!=mOther.cContainer||cNode!=mOther.cNode;}
 };
