@@ -136,4 +136,10 @@ __decl(RVWrape)<T> __decl(FRVWrape)(T fVal){return __decl(RVWrape<T>)(fVal);}
 
 END_SPACE
 
+class CSTDUnitTestBase{
+public:
+   CSTDUnitTestBase(){}
+   CSTDUnitTestBase(CSTDUnitTestBase &mOther){this=mOther;}
+};
+
 #endif
