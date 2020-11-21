@@ -75,7 +75,7 @@
 #define YEAR            31536000
 #define YEAR_BIG        31622400
 
-#define _rv(dVal) (__std(FRVWrape(dVal))).cVal
+#define _rv(dVal) (__std(FRVWrape)(dVal)).cVal
 
 #define _tECompare __std(ECompare)
 #define _tdeclECompare __decl(ECompare)
