@@ -53,8 +53,8 @@ public:
   ~_tdeclForwardList() {Clear();}
    _tdeclForwardIterator<T> Begin() {_tdeclForwardIterator<T> ret(cFront,&this); return ret;}
    const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T>* End() const {return &cEnd;}
-   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceAfter(const _tdeclForwardIterator<T> &mIt) {return EraceAfter(mIt.Wrape());}
-   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraceAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape);
+   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraseAfter(const _tdeclForwardIterator<T> &mIt) {return EraseAfter(mIt.Wrape());}
+   _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> EraseAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape);
    _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> Insert(const _tdeclForwardIterator<T> &mIt,const T &mVal) {return Insert(mIt.Wrape(),mVal);}
    _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> Insert(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape,const T &mVal);
    T Front() const {return _(cFront);}
@@ -129,7 +129,7 @@ void _tdeclForwardList::Swap(_tdeclForwardList<T> &mOther){
 }
 //--------------------------------------------------------------
 template<typename T>
-_tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> _tdeclForwardList::EraceAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape){
+_tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> _tdeclForwardList::EraseAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape){
    if (!mWrape.CheckContainer(this)) {ABORT("Wrong container");}
    if (mWrape.IsEnd()||mWrape.IsLast()) return mWrape;
    else{
