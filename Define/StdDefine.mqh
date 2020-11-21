@@ -132,7 +132,9 @@ public:
 };
 
 template<typename T>
-__decl(RVWrape)<T> __decl(FRVWrape)(T fVal){return __decl(RVWrape<T>)(fVal);}
+__decl(RVWrape)<T> __decl(FRVWrape)(T fVal){
+   __decl(RVWrape)<T> ret(fVal);
+   return ret;}
 
 END_SPACE
 

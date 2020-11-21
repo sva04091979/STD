@@ -177,14 +177,15 @@ void Free(_tdeclForwardList<T> &fList){
 
 END_SPACE
 
+struct SUnitTestForwardList{
+   int a;
+   SUnitTestForwardList(){}
+   SUnitTestForwardList(int _a):a(_a){}
+   SUnitTestForwardList(SUnitTestForwardList &mOther){this=mOther;}
+   bool operator ==(SUnitTestForwardList &mOther) {return a==mOther.a;}
+};
+   
 void UnitTestForwardList(CSTDUnitTestBase* fObj=NULL){
-   struct SUnitTestForwardList{
-      int a;
-      SUnitTestForwardList(){}
-      SUnitTestForwardList(int _a):a(_a){}
-      SUnitTestForwardList(SUnitTestForwardList &mOther){this=mOther;}
-      bool operator ==(SUnitTestForwardList &mOther) {return a==mOther.a;}
-   };
    int x[]={0,1,2,3,4,5,6,7,8,9};
    _tForwardList<int> _test(x);
    _tForwardList<int> test(_test);
