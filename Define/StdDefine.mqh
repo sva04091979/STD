@@ -75,7 +75,7 @@
 #define YEAR            31536000
 #define YEAR_BIG        31622400
 
-#define _rv(dVal) (__std(FRVWrape(dVal))).cVal
+#define _rv(dVal) (__std(FRVWrape)(dVal)).cVal
 
 #define _tECompare __std(ECompare)
 #define _tdeclECompare __decl(ECompare)
@@ -132,7 +132,9 @@ public:
 };
 
 template<typename T>
-__decl(RVWrape)<T> __decl(FRVWrape)(T fVal){return __decl(RVWrape<T>)(fVal);}
+__decl(RVWrape)<T> __decl(FRVWrape)(T fVal){
+   __decl(RVWrape)<T> ret(fVal);
+   return ret;}
 
 END_SPACE
 
