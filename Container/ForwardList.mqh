@@ -177,7 +177,7 @@ void Free(_tdeclForwardList<T> &fList){
 
 END_SPACE
 
-void UnitTestForwardList(CSTDUnitTestBase* fObj=NULL){
+void UnitTestForwardList(){
    struct SUnitTestForwardList{
       int a;
       SUnitTestForwardList(){}
@@ -196,6 +196,17 @@ void UnitTestForwardList(CSTDUnitTestBase* fObj=NULL){
    for (it=test.Begin();!it.IsEnd();++it)
       Print(_(it));
    _tForwardList<SUnitTestForwardList> test1();
+   for (int i=0;i<ArraySize(x);++i){
+      test1.PushFront(SUnitTestForwardList(i));
+   }
+   _tForwardIterator<SUnitTestForwardList> _it=test1.Begin();
+   ++_it;
+   _it=test1.Insert(++_it,SUnitTestForwardList(777));
+   PrintFormat("Size=%u",test1.Size());
+   PrintFormat("It=%i",_(_it).a);
+   test1.EraceAfter(_it);
+   for (_it=test1.Begin();!_it.IsEnd();++_it)
+      Print(_(_it).a);
 }
 
 #endif
