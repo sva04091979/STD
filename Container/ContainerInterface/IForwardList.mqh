@@ -1,49 +1,36 @@
-#ifndef _STD_C_CONTAINER_
-#define _STD_C_CONTAINER_
+#ifndef _STD_I_FORWARD_LIST_
+#define _STD_I_FORWARD_LIST_
 
-#include <STD\Define\StdDefine.mqh>
+#include "IContainer.mqh"
 
-#define _tContainer __std(CContainer)
-#define _tdeclContainer __decl(CContainer)
 #define _tdeclIForwardList __decl(IForwardList)
 
 NAMESPACE(STD)
 
-class _tdeclContainer{
-protected:
-   _tSizeT cSize;
-   _tdeclContainer():cSize(0){}
-   _tdeclContainer(_tSizeT _size):cSize(_size){}
-public:
-   _tSizeT Size() const {return cSize;}
-   bool IsEmpty() const {return !cSize;}
-};
-/////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
 template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
 class _tdeclIForwardList:public _tdeclContainer{
 protected:
    ProxyType cEnd;
    NodeType* cFront;
 protected:
-   _tdeclIForwardList()::cEnd(this,EndNode()),cFront(EndNode()){}
-   _tdeclForwardList(Type &mArr[]);
-   _tdeclForwardList(ContainerType &mOther);
-  ~_tdeclForwardList() {Clear();}
+   _tdeclIForwardList():cEnd((ContainerType*)&this,EndNode()),cFront(EndNode()){}
+   _tdeclIForwardList(Type &mArr[]);
+   _tdeclIForwardList(ContainerType &mOther);
+  ~_tdeclIForwardList() {Clear();}
    static NodeTypeEnd* EndNode();
 public:
    IteratorType Begin() {IteratorType ret(cFront,&this); return ret;}
    const ProxyType* End() const {return &cEnd;}
-   ProxyType EraceAfter(const IteratorType &mIt) {return EraceAfter(mIt.Wrape());}
+   ProxyType EraceAfter(const IteratorType &mIt) {return EraceAfter(mIt.Proxy());}
    ProxyType EraceAfter(const ProxyType &mWrape);
-   ProxyType InsertAfter(const IteratorType &mIt,const T &mVal) {return Insert(mIt.Wrape(),mVal);}
-   ProxyType InsertAfter(const ProxyType &mWrape,const T &mVal);
+   ProxyType InsertAfter(const IteratorType &mIt,const Type &mVal) {return InsertAfter(mIt.Proxy(),mVal);}
+   ProxyType InsertAfter(const ProxyType &mWrape,const Type &mVal);
    Type Front() const {return _(cFront);}
    void PushFront(Type &obj);
    Type PopFront();
    void Swap(ContainerType &mOther);
    void Clear();
-   void ClearAfter(const IteratorType &mIt) {ClearAfter(mIt.Wrape());}
+   void ClearAfter(const IteratorType &mIt) {ClearAfter(mIt.Proxy());}
    void ClearAfter(const ProxyType &mWrape);
 
 };
@@ -54,8 +41,9 @@ static NodeTypeEnd* _tdeclIForwardList::EndNode(){
    return &instance;}
 //---------------------------------------------------------
 template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
-_tdeclForwardList::_tdeclForwardList(Type &mArr[]):
+_tdeclIForwardList::_tdeclIForwardList(Type &mArr[]):
    cEnd(&this,EndNode()),cFront(EndNode()){
+   cEnd=ProxyType(&this,cFront);
    int count=ArraySize(mArr);
    if (!count) return;
    NodeType* first=new NodeType(mArr[0],NULL);
@@ -69,82 +57,82 @@ _tdeclForwardList::_tdeclForwardList(Type &mArr[]):
 }
 //---------------------------------------------------------
 template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
-_tdeclForwardList::_tdeclForwardList(ContainerType &mOther):
+_tdeclIForwardList::_tdeclIForwardList(ContainerType &mOther):
    cEnd(&this,EndNode()),cFront(EndNode()){
    if (mOther.IsEmpty()) return;
    cSize=mOther.Size();
    IteratorType it=mOther.Begin();
-   NodeType* first=ProxyType::NewNode(it.Wrape(),NULL);
+   NodeType* first=ProxyType::NewNode(it.Proxy(),NULL);
    NodeType* node=first;
    ++it;
    while(!it.IsEnd()){
-      node.Next(ProxyType::NewNode(it.Wrape(),NULL));
+      node.Next(ProxyType::NewNode(it.Proxy(),NULL));
       node=node.Next();
       ++it;}
    node.Next(cFront);
    cFront=first;
 }
 //---------------------------------------------------------
-template<typename T>
-void _tdeclForwardList::PushFront(T &obj){
+template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
+void _tdeclIForwardList::PushFront(Type &obj){
    ++cSize;
-   cFront=new _tdeclForwardNode<T>(obj,cFront);}
+   cFront=new NodeType(obj,cFront);}
 //----------------------------------------------------------
-template<typename T>
-T _tdeclForwardList::PopFront(){
+template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
+Type _tdeclIForwardList::PopFront(){
    if (cFront.IsEnd()) return _(cFront.Next());
    else{
       --cSize;
-      T ret=_(cFront);
+      Type ret=_(cFront);
       cFront=cFront.Free();
       return ret;}
 }
 //----------------------------------------------------------
-template<typename T>
-void _tdeclForwardList::Swap(_tdeclForwardList<T> &mOther){
+template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
+void _tdeclIForwardList::Swap(ContainerType &mOther){
    _tSizeT size=cSize;
-   _tdeclForwardNode<T>* front=cFront;
-   cSize=mOther.cSize;
-   cFront=mOther.cFront;
-   mOther.cSize=size;
-   mOther.cFront=front;
+   _tdeclIForwardList<ContainerType,IteratorType,ProxyType,NodeType,NodeTypeEnd,Type>* ptr=&mOther;
+   NodeType* front=cFront;
+   cSize=ptr.cSize;
+   cFront=ptr.cFront;
+   ptr.cSize=size;
+   ptr.cFront=front;
 }
 //--------------------------------------------------------------
-template<typename T>
-_tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> _tdeclForwardList::EraceAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape){
-   if (!mWrape.CheckContainer(this)) {ABORT("Wrong container");}
+template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
+ProxyType _tdeclIForwardList::EraceAfter(const ProxyType &mWrape){
+   if (!mWrape.CheckContainer((ContainerType*)&this)) {ABORT("Wrong container");}
    if (mWrape.IsEnd()||mWrape.IsLast()) return mWrape;
    else{
       --cSize;
-      return mWrape.EraceNext();}
+      return mWrape.EraceAfter();}
 }
 //--------------------------------------------------------------
-template<typename T>
-_tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T>
-_tdeclForwardList::Insert(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape,const T &mVal){
-   if (!mWrape.CheckContainer(this)) {ABORT("Wrong container");}
+template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
+ProxyType _tdeclIForwardList::InsertAfter(const ProxyType &mWrape,const Type &mVal){
+   if (!mWrape.CheckContainer((ContainerType*)&this)) {ABORT("Wrong container");}
    if (mWrape.IsEnd()) ABORT("This operation is not alloed whith end iterator");
    else{
       ++cSize;
-      return mWrape.Insert(mVal);}
+      return mWrape.InsertAfter(mVal);}
    return mWrape;
 }
 //-------------------------------------------------------------------------------
-template<typename T>
-void _tdeclForwardList::Clear(){
+template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
+void _tdeclIForwardList::Clear(){
    cSize=0;
    while (!cFront.IsEnd()) cFront=cFront.Free();
 }
 //--------------------------------------------------------------
-template<typename T>
-void _tdeclForwardList::ClearAfter(const _tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> &mWrape){
-   if (!mWrape.CheckContainer(this)) {ABORT("Wrong container");}
+template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
+void _tdeclIForwardList::ClearAfter(const ProxyType &mWrape){
+   if (!mWrape.CheckContainer((ContainerType*)&this)) {ABORT("Wrong container");}
    if (mWrape.IsEnd()||mWrape.IsLast()) return;
    else{
       --cSize;
-      for(_tdecl_ForwardProxy<_tdeclForwardList<T>,_tdeclForwardNode<T>,T> wrape=mWrape.EraceNext();
+      for(ProxyType wrape=mWrape.EraceAfter();
           !wrape.IsEnd();
-          wrape=mWrape.EraceNext()) --cSize;}
+          wrape=mWrape.EraceAfter()) --cSize;}
 }
 
 END_SPACE
