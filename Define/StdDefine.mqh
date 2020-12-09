@@ -8,6 +8,7 @@
    #define __decl(dName) dName
    #define _tSizeT ulong
    #define _tPtrDiffT long
+   #define _tTicket ulong
 #else
    #define NAMESPACE(dName)
    #define END_SPACE
@@ -15,6 +16,7 @@
    #define __decl(dName) __std(dName)
    #define _tSizeT uint
    #define _tPtrDiffT int
+   #define _tTicket int
 #endif
 
 #define EQUITY AccountInfoDouble(ACCOUNT_EQUITY)
