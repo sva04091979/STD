@@ -6,10 +6,14 @@
 #include <STD\Iterator\ForwardIterator.mqh>
 
 #define _tForwardList __std(CForwardList)
-#define _tForwardIterator __std(SForwardIterator)
-
 #define _tdeclForwardList __decl(CForwardList)
-#define _tdeclForwardIterator __decl(SForwardIterator)
+
+#ifdef __MQL4__
+   #define _tForwardIterator(dType) __std(SForwardIterator)<dType>
+   #define _tdeclForwardIterator __decl(SForwardIterator)
+#else
+   #define _tForwardIterator(dType) _tForwardList<dType>::Iterator
+#endif
 
 NAMESPACE(STD)
 
@@ -189,11 +193,6 @@ void Free(_tdeclForwardList<T> &fList){
 
 END_SPACE
 
-#ifdef __MQL4__
-   #define __Iterator(dType) _tForwardIterator<dType>
-#else
-   #define __Iterator(dType) _tForwardList<dType>::Iterator
-
 struct SUnitTestForwardList{
    int a;
    SUnitTestForwardList(){}
@@ -206,7 +205,7 @@ void UnitTestForwardList(void){
    int x[]={0,1,2,3,4,5,6,7,8,9};
    _tForwardList<int> _test(x);
    _tForwardList<int> test(_test);
-   __Iterator(int) it=test.Begin();
+   _tForwardIterator(int) it=test.Begin();
    ++it;
    it=test.InsertAfter(++it,_rv(777));
    PrintFormat("Size=%u",test.Size());
@@ -217,7 +216,7 @@ void UnitTestForwardList(void){
    for (int i=0;i<ArraySize(x);++i){
       test1.PushFront(SUnitTestForwardList(i));
    }
-   __Iterator(SUnitTestForwardList) _it=test1.Begin();
+   _tForwardIterator(SUnitTestForwardList) _it=test1.Begin();
    ++_it;
    _it=test1.InsertAfter(++_it,SUnitTestForwardList(777));
    PrintFormat("Size=%u",test1.Size());
