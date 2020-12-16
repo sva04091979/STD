@@ -83,7 +83,6 @@ static __NodeEnd* _tdeclForwardList::EndNode(){
 template<typename Type>
 _tdeclForwardList::_tdeclForwardList(Type &mArr[]):
    cEnd(&this,EndNode()),cFront(EndNode()){
-   cEnd=__Proxy(&this,cFront);
    int count=ArraySize(mArr);
    if (!count) return;
    __Node* first=new __Node(mArr[0],NULL);
