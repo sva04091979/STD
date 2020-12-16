@@ -12,30 +12,39 @@
 #define _tdeclForwardIterator __decl(SForwardIterator)
 
 NAMESPACE(STD)
-/*
+
+#ifdef __MQL4__
 template<typename Type>
-struct _tdeclForwardIterator:public _tdeclIForwardIterator<_tdeclForwardList<Type>,_tdeclForwardIterator<Type>,_tdeclForwardNode<Type>,Type>{
-   _tdeclForwardIterator(_tdeclForwardNode<Type>* mNode,_tdeclForwardList<Type>* mContainer):
-      _tdeclIForwardIterator<_tdeclForwardList<Type>,_tdeclForwardIterator<Type>,_tdeclForwardNode<Type>,Type>(mNode,mContainer){}
-   _tdeclForwardIterator(const _tdeclForwardIterator<Type> &mOther):
-      _tdeclIForwardIterator<_tdeclForwardList<Type>,_tdeclForwardIterator<Type>,_tdeclForwardNode<Type>,Type>(mOther){}
-};
-*/
+   struct _tdeclForwardIterator:public _tdeclIForwardIterator<_tdeclForwardList<Type>,_tdeclForwardIterator<Type>,_tdeclForwardNode<Type>,Type>{
+      _tdeclForwardIterator(_tdeclForwardNode<Type>* mNode,_tdeclForwardList<Type>* mContainer):
+         _tdeclIForwardIterator<_tdeclForwardList<Type>,_tdeclForwardIterator<Type>,_tdeclForwardNode<Type>,Type>(mNode,mContainer){}
+      _tdeclForwardIterator(const _tdeclForwardIterator<Type> &mOther):
+         _tdeclIForwardIterator<_tdeclForwardList<Type>,_tdeclForwardIterator<Type>,_tdeclForwardNode<Type>,Type>(mOther){}
+   };
+#endif
+
 #define __Node _tdeclForwardNode<Type>
 #define __NodeEnd _tdeclForwardNodeEnd<Type>
 #define __Proxy _tdeclForwardProxy<_tdeclForwardList<Type>,__Node,Type>
-//#define __Iterator _tdeclForwardIterator<Type>
-#define __Iterator Iterator
+#ifdef __MQL4__
+   #define __Iterator _tdeclForwardIterator<Type>
+   #define __IteratorDecl __Iterator
+#else
+   #define __Iterator Iterator
+   #define __IteratorDecl _tdeclForwardList<Type>::__Iterator
+#endif
 
 template<typename Type>
 class _tdeclForwardList:public _tdeclContainer{
-public:
-   struct Iterator:public _tdeclIForwardIterator<_tdeclForwardList<Type>,_tdeclForwardList<Type>::Iterator,_tdeclForwardNode<Type>,Type>{
-      Iterator(_tdeclForwardNode<Type>* mNode,_tdeclForwardList<Type>* mContainer):
-         _tdeclIForwardIterator<_tdeclForwardList<Type>,_tdeclForwardList<Type>::Iterator,_tdeclForwardNode<Type>,Type>(mNode,mContainer){}
-      Iterator(const _tdeclForwardList<Type>::Iterator &mOther):
-         _tdeclIForwardIterator<_tdeclForwardList<Type>,_tdeclForwardList<Type>::Iterator,_tdeclForwardNode<Type>,Type>(mOther){}
-   };
+#ifdef __MQL5__
+   public:
+      struct Iterator:public _tdeclIForwardIterator<_tdeclForwardList<Type>,__IteratorDecl,_tdeclForwardNode<Type>,Type>{
+         Iterator(_tdeclForwardNode<Type>* mNode,_tdeclForwardList<Type>* mContainer):
+            _tdeclIForwardIterator<_tdeclForwardList<Type>,__IteratorDecl,_tdeclForwardNode<Type>,Type>(mNode,mContainer){}
+         Iterator(const _tdeclForwardList<Type>::Iterator &mOther):
+            _tdeclIForwardIterator<_tdeclForwardList<Type>,__IteratorDecl,_tdeclForwardNode<Type>,Type>(mOther){}
+      };
+#endif
 protected:
    __Proxy cEnd;
    __Node* cFront;
@@ -176,9 +185,14 @@ void Free(_tdeclForwardList<T> &fList){
 #undef __NodeEnd
 #undef __Proxy
 #undef __Iterator
- 
+#undef __IteratorDecl
 
 END_SPACE
+
+#ifdef __MQL4__
+   #define __Iterator(dType) _tForwardIterator<dType>
+#else
+   #define __Iterator(dType) _tForwardList<dType>::Iterator
 
 struct SUnitTestForwardList{
    int a;
@@ -192,7 +206,7 @@ void UnitTestForwardList(void){
    int x[]={0,1,2,3,4,5,6,7,8,9};
    _tForwardList<int> _test(x);
    _tForwardList<int> test(_test);
-   _tForwardList<int>::Iterator it=test.Begin();
+   __Iterator(int) it=test.Begin();
    ++it;
    it=test.InsertAfter(++it,_rv(777));
    PrintFormat("Size=%u",test.Size());
@@ -203,7 +217,7 @@ void UnitTestForwardList(void){
    for (int i=0;i<ArraySize(x);++i){
       test1.PushFront(SUnitTestForwardList(i));
    }
-   _tForwardList<SUnitTestForwardList>::Iterator _it=test1.Begin();
+   __Iterator(SUnitTestForwardList) _it=test1.Begin();
    ++_it;
    _it=test1.InsertAfter(++_it,SUnitTestForwardList(777));
    PrintFormat("Size=%u",test1.Size());
