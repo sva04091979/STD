@@ -3,7 +3,7 @@
 
 #include "ContainerNode.mqh"
 
-#define _tdeclForwardNode __decl(IForwardNode)
+#define _tdeclForwardNode __decl(CForwardNode)
 #define __Node _tdeclForwardNode<Type>
 #define _tdeclForwardNodeEnd __decl(CForwardNodeEnd)
 
@@ -16,9 +16,10 @@ protected:
   ~_tdeclForwardNode(){}
 public:
    _tdeclForwardNode():_tdeclIContainerNode<__Node,Type>(){}
+   _tdeclForwardNode(const _tdeclForwardNode<Type> &mNode,__Node* mNext):_tdeclIContainerNode<__Node,Type>(mNode.cObject),cNext(mNext){}
    _tdeclForwardNode(const Type &mObj,__Node* mNext):_tdeclIContainerNode<__Node,Type>(mObj),cNext(mNext){}
    _tdeclForwardNode(const __Node &mOther):_tdeclIContainerNode<__Node,Type>(mOther),cNext(mOther.Next()){}
-   static __Node* NewNode(__Node &mNode,__Node* mNext) {return new __Node(mNode.cObject,mNext);}
+//   static __Node* NewNode(__Node &mNode,__Node* mNext) {return new __Node(mNode.cObject,mNext);}
    __Node* Free() override;
    __Node* Next() const {return cNext;}
    __Node* EraceAfter();

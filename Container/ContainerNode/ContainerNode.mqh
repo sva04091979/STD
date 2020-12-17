@@ -17,10 +17,16 @@ protected:
   ~_tdeclIContainerNode(){}
 public:
    Type Dereference() const {return cObject;}
+   Type It() const {return cObject;}
    virtual bool Equal(const NodeType &mOther){return !mOther.IsEnd()&&cObject==_(mOther);}
    virtual NodeType* Free()=0;
    virtual bool IsEnd() const {return false;}
 };
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+template<typename NodeType>
+NodeType* NewContainerNode(NodeType &mNode,NodeType* mNext){
+   return new NodeType(mNode,mNext);}
 
 END_SPACE
 
