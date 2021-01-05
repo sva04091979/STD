@@ -25,7 +25,7 @@ public:
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 template<typename NodeType>
-NodeType* NewContainerNode(NodeType &mNode,NodeType* mNext){
+NodeType* NewContainerNode(NodeType* mNode,NodeType* mNext){
    return new NodeType(mNode,mNext);}
 
 END_SPACE
