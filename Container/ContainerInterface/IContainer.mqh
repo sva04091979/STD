@@ -19,4 +19,7 @@ public:
 
 END_SPACE
 
+template<typename ContainerType>
+void ReleaseContainer(ContainerType &mContainer){ReleaseIteratorsFrom(mContainer.Begin());}
+
 #endif

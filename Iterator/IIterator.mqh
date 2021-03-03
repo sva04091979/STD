@@ -29,4 +29,11 @@ public:
 
 END_SPACE
 
+template<typename IteratorType>
+void ReleaseIteratorsFrom(IteratorType &it){
+   while(!it.IsEnd()){
+      DEL(_(it));
+      ++it;}
+}
+
 #endif
