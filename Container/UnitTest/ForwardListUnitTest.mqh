@@ -43,7 +43,8 @@ void ForwardListUnitTest(void){
       ++it;
       ++itCopy;
    }
-   while(!testPtr.IsEmpty()) delete testPtr.PopFront();
+   ReleaseContainer(testPtr);
+//   while(!testPtr.IsEmpty()) delete testPtr.PopFront();
 /*
    _tForwardIterator(int) it=test.Begin();
    ++it;
