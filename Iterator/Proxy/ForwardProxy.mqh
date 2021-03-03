@@ -12,7 +12,7 @@ class _tdeclForwardProxy{
    ContainerType* cContainer;
    NodeType* cNode;
 public:
-   static NodeType* NewNode(const _tdeclForwardProxy<ContainerType,NodeType,Type> &mProxy,NodeType* mNext) {return NewContainerNode<NodeType>(mProxy.cNode,mNext);}
+   static NodeType* NewNode(const _tdeclForwardProxy<ContainerType,NodeType,Type> &mProxy,NodeType* mNext) {return STDNewContainerNode<NodeType>(mProxy.cNode,mNext);}
    _tdeclForwardProxy(const _tdeclForwardProxy<ContainerType,NodeType,Type> &mOther){this=mOther;}
    _tdeclForwardProxy(ContainerType* mContainer,NodeType* mNode):cContainer(mContainer),cNode(mNode){}
    _tdeclForwardProxy<ContainerType,NodeType,Type> EraceAfter() const;
