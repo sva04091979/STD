@@ -13,12 +13,15 @@ class CTickEvent{
    class _TickEventWrape:public _TickEventBase{
       Type* cPtr;
    public:
+      _TickEventWrape(Type* ptr):cPtr(ptr){}
       void OnTick() {cPtr.OnTick();}
+      bool operator==(void* ptr) {return cPtr==ptr;}
    };
    class _TickEventNode{
       _TickEventBase* cPtr;
       _TickEventNode* cNext;
    public:
+      _TickEventNode(_TickEventBase* ptr):cPtr(ptr){}
       void OnTick(){
          if (cNext!=NULL) cNext.OnTick();
          cPtr.OnTick();
@@ -26,7 +29,7 @@ class CTickEvent{
       void Next(_TickEventNode* ptr) {cNext=ptr;}
       _TickEventNode* Next() {return cNext;}
    } *cNode;
-   CTickEvent(){}
+   CTickEvent():cNode(NULL){}
 public:
    static CTickEvent* Ptr(){
       static CTickEvent instance;
@@ -34,10 +37,16 @@ public:
    }
    void OnTick() {if (cNode!=NULL) cNode.OnTick();}
    template<typename Type>
-   void Add(Type* ptr){
-      _TickEventNode node=new _TickEventNode(new _TickEventWrape<Type>(ptr));
+   void AddFast(Type* ptr){
+      _TickEventNode* node=new _TickEventNode(new _TickEventWrape<Type>(ptr));
       node.Next(cNode);
       cNode=node;
+   }
+   template<typename Type>
+   bool Add(Type* ptr){
+      if (Find(ptr)) return false;
+      AddFast(ptr);
+      return true;
    }
    template<typename Type>
    void Remove(Type* ptr){
@@ -61,6 +70,18 @@ public:
                next=next.Next();
             }
       }
+   }
+   template<typename Type>
+   void operator +=(Type *ptr) {AddFast(ptr);}
+   template<typename Type>
+   void operator -=(Type *ptr) {Remove(ptr);}
+private:
+   bool Find(void* ptr){
+   _TickEventNode* it=cNode;
+   while(it!=NULL)
+      if (it==ptr) return true;
+      else it=it.Next();
+   return false;
    }
 };
 
