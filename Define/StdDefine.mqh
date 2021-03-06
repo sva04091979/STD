@@ -153,7 +153,7 @@ __decl(RVWrape)<T> __decl(FRVWrape)(T fVal){
    return ret;}
 
 template<typename T>
-void TempCondition(T &fValue,EAct fAct){
+void TempCondition(T &fValue,EPushPop fAct){
    static T temp=T();
    switch(fAct){
       case PUSH: temp=fValue; break;
