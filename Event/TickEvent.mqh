@@ -9,6 +9,7 @@ class CTickEvent{
       virtual void OnTick()=0;
       virtual bool Equal(void* ptr)=0;
    };
+   ///////////////////////////////////////////////////////////////
    template<typename Type>
    class _TickEventWrape:public _TickEventBase{
       Type* cPtr;
@@ -17,38 +18,53 @@ class CTickEvent{
       void OnTick() {cPtr.OnTick();}
       bool Equal(void* ptr) {return cPtr==ptr;}
    };
+   ///////////////////////////////////////////////////////////////
    class _TickEventNode{
       _TickEventBase* cPtr;
       _TickEventNode* cNext;
    public:
       _TickEventNode(_TickEventBase* ptr):cPtr(ptr){}
+     ~_TickEventNode() {delete cPtr;}
       void OnTick(){
          if (cNext!=NULL) cNext.OnTick();
          cPtr.OnTick();
       }
+   //----------------------------------------------------------------
       void Next(_TickEventNode* ptr) {cNext=ptr;}
+      void Delete(){
+         if (cNext!=NULL) cNext.Delete();
+         delete &this;
+      }
+   //----------------------------------------------------------------
       _TickEventNode* Next() {return cNext;}
       bool Equal(void* ptr) {return cPtr.Equal(ptr);}
-   } *cNode;
+   };
+   ///////////////////////////////////////////////////////////////
+   _TickEventNode* cNode;
    CTickEvent():cNode(NULL){}
+  ~CTickEvent(){if (cNode!=NULL) cNode.Delete();}
 public:
    static CTickEvent* Ptr(){
       static CTickEvent instance;
       return &instance;
    }
+//----------------------------------------------------------------
    void OnTick() {if (cNode!=NULL) cNode.OnTick();}
+//----------------------------------------------------------------
    template<typename Type>
    void AddFast(Type &ptr){
       _TickEventNode* node=new _TickEventNode(new _TickEventWrape<Type>(&ptr));
       node.Next(cNode);
       cNode=node;
    }
+//----------------------------------------------------------------
    template<typename Type>
    bool Add(Type &ptr){
       if (Find(&ptr)) return false;
       AddFast(ptr);
       return true;
    }
+//----------------------------------------------------------------
    template<typename Type>
    void Remove(Type &ptr){
       if (!cNode) return;
@@ -72,10 +88,13 @@ public:
             }
       }
    }
+//----------------------------------------------------------------
    template<typename Type>
    void operator +=(Type &ptr) {AddFast(ptr);}
+//----------------------------------------------------------------
    template<typename Type>
    void operator -=(Type &ptr) {Remove(ptr);}
+//----------------------------------------------------------------
 private:
    bool Find(void* ptr){
    _TickEventNode* it=cNode;
