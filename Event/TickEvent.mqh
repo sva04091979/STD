@@ -6,7 +6,7 @@
 class CTickEvent{
    class _TickEventBase{
    public:
-      virtual void OnTick()=0;
+      virtual void Call()=0;
       virtual bool Equal(void* ptr)=0;
    };
    ///////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@ class CTickEvent{
       Type* cPtr;
    public:
       _TickEventWrape(Type* ptr):cPtr(ptr){}
-      void OnTick() {cPtr.OnTick();}
+      void Call() {cPtr.OnTick();}
       bool Equal(void* ptr) {return cPtr==ptr;}
    };
    ///////////////////////////////////////////////////////////////
@@ -25,9 +25,9 @@ class CTickEvent{
    public:
       _TickEventNode(_TickEventBase* ptr):cPtr(ptr){}
      ~_TickEventNode() {delete cPtr;}
-      void OnTick(){
-         if (cNext!=NULL) cNext.OnTick();
-         cPtr.OnTick();
+      void Call(){
+         if (cNext!=NULL) cNext.Call();
+         cPtr.Call();
       }
    //----------------------------------------------------------------
       void Next(_TickEventNode* ptr) {cNext=ptr;}
@@ -49,7 +49,7 @@ public:
       return &instance;
    }
 //----------------------------------------------------------------
-   void OnTick() {if (cNode!=NULL) cNode.OnTick();}
+   void Call() {if (cNode!=NULL) cNode.Call();}
 //----------------------------------------------------------------
    template<typename Type>
    void AddFast(Type &ptr){
