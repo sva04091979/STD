@@ -1,10 +1,19 @@
 #ifndef _STD_EVENT_
 #define _STD_EVENT_
 
+template<typename TList>
+void __CheckPointer(TList *list){
+   while (list!=NULL&&!list.Check()){
+      TList* it=list;
+      list=list.Next();
+      delete it;}
+}
+
 #define _DEventBase(dSign) \
    class _TickEventBase{   \
    public:  \
       virtual void Call dSign=0;   \
+      virtual bool Check()=0; \
       virtual bool Equal(void* ptr)=0;};
 
 #define _DEventWrape(dSign,dCall,dFunc)  \
@@ -14,6 +23,7 @@
    public:  \
       _TickEventWrape(Type* ptr):cPtr(ptr){} \
       void Call dSign {cPtr.dFunc dCall;}   \
+      bool Check() {return CheckPointer(cPtr)!=POINTER_INVALID;}  \
       bool Equal(void* ptr) {return cPtr==ptr;}};
 
 #define _DEventNode(dSign,dCall) \
@@ -23,10 +33,14 @@
    public:  \
       _TickEventNode(_TickEventBase* ptr):cPtr(ptr){} \
      ~_TickEventNode() {delete cPtr;}  \
+      void FastCall dSign{ \
+         if (cNext!=NULL) cNext.FastCall dCall; \
+         cPtr.Call dCall;} \
       void Call dSign{ \
+         __CheckPointer(cNext);  \
          if (cNext!=NULL) cNext.Call dCall; \
-         cPtr.Call dCall; \
-      }  \
+         cPtr.Call dCall;} \
+      bool Check() {return cPtr.Check();} \
       void Next(_TickEventNode* ptr) {cNext=ptr;}  \
       void Delete(){ \
          if (cNext!=NULL) cNext.Delete(); \
@@ -40,13 +54,16 @@ class dName{   \
    _DEventWrape(dSign,dCall,dFunc);   \
    _DEventNode(dSign,dCall); \
    _TickEventNode* cNode;  \
-   dName():cNode(NULL){Print("ctor "+typename(this));} \
-  ~dName(){Print("destruct "+typename(this)); if (cNode!=NULL) cNode.Delete();}  \
+   dName():cNode(NULL){} \
+  ~dName(){if (cNode!=NULL) cNode.Delete();}  \
 public:  \
    static dName* Ptr(){  \
       static dName instance;  \
       return &instance;} \
-   void Call dSign {if (cNode!=NULL) cNode.Call dCall;}   \
+   void FastCall dSign {if (cNode!=NULL) cNode.FastCall dCall;}   \
+   void Call dSign { \
+      __CheckPointer(cNode);  \
+      if (cNode!=NULL) cNode.Call dCall;}   \
    template<typename Type> \
    void AddFast(Type &ptr){   \
       _TickEventNode* node=new _TickEventNode(new _TickEventWrape<Type>(&ptr));  \
