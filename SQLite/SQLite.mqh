@@ -2,12 +2,19 @@
 #define _STD_SQLLITE_
 #ifdef __MQL4__
 
+#include "SQLiteError.mqh"
 
 #define DATABASE_OPEN_READONLY 0x1
 #define DATABASE_OPEN_READWRITE 0x2
 #define DATABASE_OPEN_CREATE 0x4
 #define DATABASE_OPEN_MEMORY 0x80
 #define DATABASE_OPEN_COMMON 0x1000
+
+#ifdef DB_NO_ERROR_CONTROL
+   #define ErrorSet(dErr)
+#else
+   #define ErrorSet(dErr) SQLiteError=dErr;
+#endif
 
 #import "sqlite3.dll"
    int sqlite3_open_v2(uchar &filename[], /* Database filename (UTF-8) */
@@ -22,14 +29,6 @@
                     int); /*char **errmsg);*/                              /* Error msg written here */                 
 #import
 
-string DatabaseErrorCode(int errCode){
-   return (string)errCode;
-}
-
-void DatabaseErrorCheck(string func, int errCode){
-   if (errCode!=0)
-      PrintFormat("%s error: %s",func,DatabaseErrorCode(errCode));
-}
 //---------------------------------------------------------------------------------------
 int DatabaseOpen(string filename,uint flags){
    static string filesPath=TerminalInfoString(TERMINAL_DATA_PATH)+"\\MQL4\\Files\\";
@@ -41,20 +40,20 @@ int DatabaseOpen(string filename,uint flags){
    StringToCharArray(filename,fname,0,WHOLE_ARRAY,CP_UTF8);
    int ret=0;
    int errCode=sqlite3_open_v2(fname,ret,flags,NULL);
-   DatabaseErrorCheck(__FUNCTION__,errCode);
+   ErrorSet(errCode);
    return !errCode?ret:INVALID_HANDLE;
 }
 //-----------------------------------------------------------------------------------------
 void DatabaseClose(int database){
    int errCode=sqlite3_close_v2(database);
-   DatabaseErrorCheck(__FUNCTION__,errCode);
+   ErrorSet(errCode);
 }
 //-----------------------------------------------------------------------------------------
 bool DatabaseExecute(int database,string sql){
    uchar query[];
    StringToCharArray(sql,query,0,WHOLE_ARRAY,CP_UTF8);
    int errCode=sqlite3_exec(database,query,NULL,NULL,NULL);
-   DatabaseErrorCheck(__FUNCTION__,errCode);
+   ErrorSet(errCode);
    return !errCode;
 }
 
