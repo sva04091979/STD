@@ -34,6 +34,8 @@
      int &ppStmt,/*sqlite3_stmt **ppStmt,*/  /* OUT: Statement handle */
      int/*const char **pzTail*/     /* OUT: Pointer to unused portion of zSql */
    );
+   int sqlite3_finalize(int pStmt/*sqlite3_stmt *pStmt*/);
+   
 #import
 
 //---------------------------------------------------------------------------------------
@@ -71,6 +73,11 @@ int DatabasePrepare(int database,string  sql){
    int errCode=sqlite3_prepare_v2(database,query,-1,ret,NULL);
    ErrorSet(errCode);
    return !errCode?ret:INVALID_HANDLE;
+}
+//--------------------------------------------------------------------------------------------
+void DatabaseFinalize(int request){
+   int errCode=sqlite3_finalize(request);
+   ErrorSet(errCode);
 }
 
 #endif
