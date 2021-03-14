@@ -16,6 +16,10 @@
    #define ErrorSet(dErr) SQLiteError=dErr
 #endif
 
+#import "sqliteconnector.dll"
+   int DBTest(const uchar &filename_utf8[],uint flags);
+#import
+
 #import "sqlite3.dll"
    int sqlite3_open_v2(uchar &filename[], /* Database filename (UTF-8) */
                        int &ppDb,      /* OUT: SQLite db handle */
@@ -35,9 +39,24 @@
      int/*const char **pzTail*/     /* OUT: Pointer to unused portion of zSql */
    );
    int sqlite3_finalize(int pStmt/*sqlite3_stmt *pStmt*/);
-   
+   int sqlite3_errcode(int db);
 #import
 
+//----------------------------------------------------------------------------------------
+int DatabaseTest(string filename,uint flags){
+   static string filesPath=TerminalInfoString(TERMINAL_DATA_PATH)+"\\MQL4\\Files\\";
+   static string commonFilesPath=TerminalInfoString(TERMINAL_COMMONDATA_PATH)+"\\Files\\";
+   bool isCommon=bool(flags&DATABASE_OPEN_COMMON);
+   flags&=~DATABASE_OPEN_COMMON;
+   filename=isCommon?commonFilesPath+filename:filesPath+filename;
+   uchar fname[];
+   StringToCharArray(filename,fname,0,WHOLE_ARRAY,CP_UTF8);
+   return DBTest(fname,flags);
+}
+//---------------------------------------------------------------------------------------
+int DatabaseLastError(int database){
+   return database==INVALID_HANDLE?-1:sqlite3_errcode(database);
+}
 //---------------------------------------------------------------------------------------
 int DatabaseOpen(string filename,uint flags){
    static string filesPath=TerminalInfoString(TERMINAL_DATA_PATH)+"\\MQL4\\Files\\";
@@ -47,20 +66,24 @@ int DatabaseOpen(string filename,uint flags){
    filename=isCommon?commonFilesPath+filename:filesPath+filename;
    uchar fname[];
    StringToCharArray(filename,fname,0,WHOLE_ARRAY,CP_UTF8);
-   int ret=0;
-   int errCode=sqlite3_open_v2(fname,ret,flags,NULL);
-   ErrorSet(errCode);
-   return !errCode?ret:INVALID_HANDLE;
+   int ret;
+   if (0!=sqlite3_open_v2(fname,ret,flags,NULL)){
+      DatabaseClose(ret);
+      return INVALID_HANDLE;}
+   else return ret;
 }
 //-----------------------------------------------------------------------------------------
 void DatabaseClose(int database){
-   int errCode=sqlite3_close_v2(database);
-   ErrorSet(errCode);
+   if (database!=INVALID_HANDLE) sqlite3_close_v2(database);
 }
+
+
 //-----------------------------------------------------------------------------------------
 bool DatabaseExecute(int database,string sql){
    uchar query[];
    StringToCharArray(sql,query,0,WHOLE_ARRAY,CP_UTF8);
+   int mutex;
+   string errText=DBExec(database,query,mutex);
    int errCode=sqlite3_exec(database,query,NULL,NULL,NULL);
    ErrorSet(errCode);
    return !errCode;
