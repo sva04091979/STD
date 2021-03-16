@@ -18,6 +18,9 @@
 
 #import "sqliteconnector.dll"
    int DBTest(const uchar &filename_utf8[],uint flags);
+   bool DBExec(int db,const uchar &sql[],int& errTextPtr);
+   uint DBTextBuffSize(int textPtr);
+   void DBGetText(int textPtr,uchar &buff[],uint buffSize);
 #import
 
 #import "sqlite3.dll"
@@ -39,6 +42,7 @@
      int/*const char **pzTail*/     /* OUT: Pointer to unused portion of zSql */
    );
    int sqlite3_finalize(int pStmt/*sqlite3_stmt *pStmt*/);
+   void sqlite3_free(int);
    int sqlite3_errcode(int db);
 #import
 
@@ -82,13 +86,22 @@ void DatabaseClose(int database){
 bool DatabaseExecute(int database,string sql){
    uchar query[];
    StringToCharArray(sql,query,0,WHOLE_ARRAY,CP_UTF8);
-   int mutex;
-   string errText=DBExec(database,query,mutex);
+   int textPtr=0;
+   bool ret=DBExec(database,query,textPtr);
+   if (!ret){
+      uchar buff[];
+      uint len=DBTextBuffSize(textPtr);
+      int buffSize=ArrayResize(buff,len);
+      DBGetText(textPtr,buff,buffSize);
+      sqlite3_free(textPtr);
+      PrintFormat("DB execute error: %s",CharArrayToString(buff,0,WHOLE_ARRAY,CP_UTF8));
+      }
    int errCode=sqlite3_exec(database,query,NULL,NULL,NULL);
    ErrorSet(errCode);
    return !errCode;
 }
 //----------------------------------------------------------------------------------------
+/*
 int DatabasePrepare(int database,string  sql){
    int ret;
    uchar query[];
@@ -97,11 +110,13 @@ int DatabasePrepare(int database,string  sql){
    ErrorSet(errCode);
    return !errCode?ret:INVALID_HANDLE;
 }
+*/
 //--------------------------------------------------------------------------------------------
+/*
 void DatabaseFinalize(int request){
    int errCode=sqlite3_finalize(request);
    ErrorSet(errCode);
 }
-
+*/
 #endif
 #endif
