@@ -18,7 +18,7 @@
 
 #import "sqliteconnector.dll"
    int DBTest(const uchar &filename_utf8[],uint flags);
-   bool DBExec(int db,const uchar &sql[],int& errTextPtr);
+   int DBExec(int db,const uchar &sql[],int& errTextPtr);
    uint DBTextBuffSize(int textPtr);
    void DBGetText(int textPtr,uchar &buff[],uint buffSize);
 #import
@@ -34,16 +34,18 @@
                     int, /* (*callback)(void*,int,char**,char**),*/  /* Callback function */
                     int, /*void *,*/        /* 1st argument to callback */
                     int); /*char **errmsg);*/                              /* Error msg written here */
-   int sqlite3_prepare_v2(
-     int db,/*sqlite3 *db,*/            /* Database handle */
-     uchar &zSql[],/*const char *zSql,*/       /* SQL statement, UTF-8 encoded */
-     int nByte,              /* Maximum length of zSql in bytes. */
-     int &ppStmt,/*sqlite3_stmt **ppStmt,*/  /* OUT: Statement handle */
-     int/*const char **pzTail*/     /* OUT: Pointer to unused portion of zSql */
-   );
-   int sqlite3_finalize(int pStmt/*sqlite3_stmt *pStmt*/);
+int sqlite3_prepare16_v2(
+     int db,/*sqlite3 *db,          */  /* Database handle */
+     string query,/*const void *zSql,     */  /* SQL statement, UTF-16 encoded */
+     int,/*int nByte,            */  /* Maximum length of zSql in bytes. */
+     int& pStmt,/*sqlite3_stmt **ppStmt,*/  /* OUT: Statement handle */
+     int/*const void **pzTail   */  /* OUT: Pointer to unused portion of zSql */
+   );   
+int sqlite3_finalize(int pStmt/*sqlite3_stmt *pStmt*/);
    void sqlite3_free(int);
    int sqlite3_errcode(int db);
+   string sqlite3_errmsg16(int db);
+   int sqlite3_db_handle(int&);
 #import
 
 //----------------------------------------------------------------------------------------
@@ -72,13 +74,15 @@ int DatabaseOpen(string filename,uint flags){
    StringToCharArray(filename,fname,0,WHOLE_ARRAY,CP_UTF8);
    int ret;
    if (0!=sqlite3_open_v2(fname,ret,flags,NULL)){
+      PrintFormat("DB open error: %s",sqlite3_errmsg16(ret));
       DatabaseClose(ret);
       return INVALID_HANDLE;}
    else return ret;
 }
 //-----------------------------------------------------------------------------------------
 void DatabaseClose(int database){
-   if (database!=INVALID_HANDLE) sqlite3_close_v2(database);
+   if (database!=INVALID_HANDLE&&0!=sqlite3_close_v2(database))
+      PrintFormat("DB close error: %s",sqlite3_errmsg16(database));
 }
 
 
@@ -86,37 +90,31 @@ void DatabaseClose(int database){
 bool DatabaseExecute(int database,string sql){
    uchar query[];
    StringToCharArray(sql,query,0,WHOLE_ARRAY,CP_UTF8);
-   int textPtr=0;
-   bool ret=DBExec(database,query,textPtr);
-   if (!ret){
-      uchar buff[];
-      uint len=DBTextBuffSize(textPtr);
-      int buffSize=ArrayResize(buff,len);
-      DBGetText(textPtr,buff,buffSize);
-      sqlite3_free(textPtr);
-      PrintFormat("DB execute error: %s",CharArrayToString(buff,0,WHOLE_ARRAY,CP_UTF8));
+   int textPtr;
+   int ret=DBExec(database,query,textPtr);
+   if (ret!=0){
+      PrintFormat("DB execute error: %s",sqlite3_errmsg16(database));
       }
-   int errCode=sqlite3_exec(database,query,NULL,NULL,NULL);
-   ErrorSet(errCode);
-   return !errCode;
+   sqlite3_free(textPtr);
+   return !ret;
 }
 //----------------------------------------------------------------------------------------
-/*
 int DatabasePrepare(int database,string  sql){
    int ret;
    uchar query[];
    StringToCharArray(sql,query,0,WHOLE_ARRAY,CP_UTF8);
-   int errCode=sqlite3_prepare_v2(database,query,-1,ret,NULL);
-   ErrorSet(errCode);
+//   int errCode=sqlite3_prepare_v2(database,query,-1,ret,NULL);
+   int errCode=sqlite3_prepare16_v2(database,sql,-1,ret,NULL);
+   if (errCode!=0)
+      PrintFormat("DB prepare error: %s",sqlite3_errmsg16(database));
    return !errCode?ret:INVALID_HANDLE;
 }
-*/
 //--------------------------------------------------------------------------------------------
-/*
 void DatabaseFinalize(int request){
+   if (request==INVALID_HANDLE) return;
    int errCode=sqlite3_finalize(request);
-   ErrorSet(errCode);
+   if (errCode!=0)
+      PrintFormat("DB finalize error: %s",sqlite3_errmsg16(sqlite3_db_handle(request)));
 }
-*/
 #endif
 #endif
