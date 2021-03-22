@@ -2,9 +2,8 @@
 #define _STD_SQLLITE_
 #ifdef __MQL4__
 
-#include "SQLiteError.mqh"
-
 #define SQLITE_OK 0
+#define SQLITE_ROW 100
 #define SQLITE_DONE 101
 
 #define DATABASE_OPEN_READONLY 0x1
@@ -45,6 +44,8 @@ int sqlite3_db_handle(int request);
 int sqlite3_column_count(int request);
 int sqlite3_step(int request);
 string sqlite3_column_origin_name16(int request,int columNumber);
+int sqlite3_column_type(int request,int iCol);
+string sqlite3_column_text16(int stmt,int iCol);
 #import
 
 enum ENUM_DATABASE_FIELD_TYPE{
@@ -113,6 +114,7 @@ void DatabaseFinalize(int request){
 bool DatabaseRead(int request){
    if (request==INVALID_HANDLE) return false;
    switch(sqlite3_step(request)){
+      case SQLITE_ROW:
       case SQLITE_DONE:
          return true;
       default:
@@ -133,7 +135,16 @@ bool DatabaseColumnName(int request,int column,string& name){
    return name!=NULL;
 }
 //-----------------------------------------------------------------------------
-
+ENUM_DATABASE_FIELD_TYPE DatabaseColumnType(int request,int column){
+   if (request==INVALID_HANDLE) return DATABASE_FIELD_TYPE_INVALID;
+   return (ENUM_DATABASE_FIELD_TYPE)sqlite3_column_type(request,column);
+}
+//-----------------------------------------------------------------------------
+bool DatabaseColumnText(int request,int column,string& value){
+   if (request==INVALID_HANDLE) return false;
+   value=sqlite3_column_text16(request,column);
+   return true;
+}
 
 #endif
 #endif
