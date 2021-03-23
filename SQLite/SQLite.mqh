@@ -6,6 +6,8 @@
 #define SQLITE_ROW 100
 #define SQLITE_DONE 101
 
+#define SQLITE_TRANSIENT -1
+
 #define DATABASE_OPEN_READONLY 0x1
 #define DATABASE_OPEN_READWRITE 0x2
 #define DATABASE_OPEN_CREATE 0x4
@@ -46,6 +48,14 @@ int sqlite3_step(int request);
 string sqlite3_column_origin_name16(int request,int columNumber);
 int sqlite3_column_type(int request,int iCol);
 string sqlite3_column_text16(int stmt,int iCol);
+int sqlite3_column_int(int stmt, int iCol);
+long sqlite3_column_int64(int stmt, int iCol);
+double sqlite3_column_double(int stmt, int iCol);
+int sqlite3_bind_double(int stmt,int index,double value);
+int sqlite3_bind_int(int stmt,int index,int value);
+int sqlite3_bind_int64(int stmt,int index,long value);
+int sqlite3_bind_text16(int stmt,int index,string value,int,int);
+
 #import
 
 enum ENUM_DATABASE_FIELD_TYPE{
@@ -56,7 +66,6 @@ enum ENUM_DATABASE_FIELD_TYPE{
    DATABASE_FIELD_TYPE_BLOB,
    DATABASE_FIELD_TYPE_NULL
 };
-
 
 //---------------------------------------------------------------------------------------
 int DatabaseLastError(int database){
@@ -103,6 +112,7 @@ int DatabasePrepare(int database,string  sql){
       PrintFormat("DB prepare error: %s",sqlite3_errmsg16(database));
    return !errCode?ret:INVALID_HANDLE;
 }
+
 //--------------------------------------------------------------------------------------------
 void DatabaseFinalize(int request){
    if (request==INVALID_HANDLE) return;
@@ -144,6 +154,98 @@ bool DatabaseColumnText(int request,int column,string& value){
    if (request==INVALID_HANDLE) return false;
    value=sqlite3_column_text16(request,column);
    return true;
+}
+//-----------------------------------------------------------------------------
+bool DatabaseColumnInteger(int request,int column,int& value){
+   if (request==INVALID_HANDLE) return false;
+   value=sqlite3_column_int(request,column);
+   return true;
+}
+//-----------------------------------------------------------------------------
+bool DatabaseColumnLong(int request,int column,long& value){
+   if (request==INVALID_HANDLE) return false;
+   value=sqlite3_column_int64(request,column);
+   return true;
+}
+//-----------------------------------------------------------------------------
+bool DatabaseColumnDouble(int request,int column,double& value){
+   if (request==INVALID_HANDLE) return false;
+   value=sqlite3_column_double(request,column);
+   return true;
+}
+//------------------------------------------------------------------------------
+template<typename Type>
+bool DatabaseBind(int request,int index,Type value){
+   if (request==INVALID_HANDLE) return false;
+   int errCode=_DatabaseBind(request,index,value);
+   switch(errCode){
+      case -1: return false;
+      case SQLITE_OK: return true;
+      default:
+         PrintFormat("DB bind error: %s",sqlite3_errmsg16(sqlite3_db_handle(request)));
+         return false;
+   }
+}
+//------------------------------------------------------------------------------
+template<typename Type>
+int _DatabaseBind(int request,int index,Type value){
+   return -1;
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,double value){
+   return sqlite3_bind_double(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,float value){
+   return sqlite3_bind_double(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,bool value){
+   return sqlite3_bind_int(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,char value){
+   return sqlite3_bind_int(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,uchar value){
+   return sqlite3_bind_int(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,short value){
+   return sqlite3_bind_int(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,ushort value){
+   return sqlite3_bind_int(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,int value){
+   return sqlite3_bind_int(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,uint value){
+   return sqlite3_bind_int(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,color value){
+   return sqlite3_bind_int(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,datetime value){
+   return sqlite3_bind_int64(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,long value){
+   return sqlite3_bind_int64(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,ulong value){
+   return sqlite3_bind_int64(request,index,value);
+}
+//-----------------------------------------------------------------------------------
+int _DatabaseBind(int request,int index,string value){
+   return sqlite3_bind_text16(request,index,value,-1,SQLITE_TRANSIENT);
 }
 
 #endif
