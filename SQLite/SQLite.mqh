@@ -55,7 +55,7 @@ int sqlite3_bind_double(int stmt,int index,double value);
 int sqlite3_bind_int(int stmt,int index,int value);
 int sqlite3_bind_int64(int stmt,int index,long value);
 int sqlite3_bind_text16(int stmt,int index,string value,int,int);
-
+int sqlite3_reset(int stmt);
 #import
 
 enum ENUM_DATABASE_FIELD_TYPE{
@@ -131,6 +131,14 @@ bool DatabaseRead(int request){
          PrintFormat("DB read error: %s",sqlite3_errmsg16(sqlite3_db_handle(request)));
          return false;
    }
+}
+//----------------------------------------------------------------------------
+bool DatabaseReset(int request){
+   if (request==INVALID_HANDLE) return false;
+   int errCode=sqlite3_reset(request);
+   if (errCode!=SQLITE_OK)
+      PrintFormat("DB reset error: %s",sqlite3_errmsg16(sqlite3_db_handle(request)));
+   return errCode==SQLITE_OK; 
 }
 //----------------------------------------------------------------------------
 int DatabaseColumnsCount(int request){
