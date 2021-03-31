@@ -25,6 +25,7 @@ public:
   ~tdeclChart() {if (cIsSymbolControl) DEL(cSymbol);}
    bool IsNewBar();
    int CountFromLastCheckedBar() const {return cCountFromLastCheckedBar;}
+   int BarShift(datetime time) const {return cSymbol.BarShift(time);}
    void SetFirstCheckNotNewBar();
 private:
    void Init(const tdeclSymbol* symbol,ENUM_TIMEFRAMES frame,bool isSymbolControl);
