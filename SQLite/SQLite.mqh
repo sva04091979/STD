@@ -123,10 +123,12 @@ void DatabaseFinalize(int request){
 //----------------------------------------------------------------------------
 bool DatabaseRead(int request){
    if (request==INVALID_HANDLE) return false;
-   switch(sqlite3_step(request)){
+   int res=sqlite3_step(request);
+   switch(res){
       case SQLITE_ROW:
-      case SQLITE_DONE:
          return true;
+      case SQLITE_DONE:
+         return false;
       default:
          PrintFormat("DB read error: %s",sqlite3_errmsg16(sqlite3_db_handle(request)));
          return false;
