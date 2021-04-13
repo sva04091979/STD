@@ -1,11 +1,11 @@
 #ifndef _STD_I_ITERATOR_
 #define _STD_I_ITERATOR_
 
-#include <STD\Define\StdDefine.mqh>
+#include "..\..\Define\StdDefine.mqh"
 
-#define _tIterator __std(IIterator)
+#define _tIterator __std(Iterator)
 #define _tIteratorAccess __std(SIteratorAccess)
-#define _tdeclIterator __decl(IIterator)
+#define _tdeclIterator __decl(Iterator)
 #define _tdeclIteratorAccess __decl(SIteratorAccess)
 
 #define _i(dIt) dIt.__GetAccess().cIteratorProxy.cIteratorValue
@@ -24,7 +24,7 @@ struct _tdeclIterator{
    ProxyType* cProxy;
 public:
    _tdeclIterator(ProxyType &mProxy):cProxy(&mProxy){}
-   _tdeclIteratorAccess<ProxyType> __GetAccess() const {return cProxy.GetAccess();}
+   _tdeclIteratorAccess<ProxyType> __GetAccess() const {return cProxy.__GetAccess();}
    Type Dereference() const {return _(cProxy);}
    void operator =(const _tdeclIterator &mOther) {cProxy=mOther.Proxy();}
    void operator =(ProxyType &mProxy) {cProxy=&mProxy;}
