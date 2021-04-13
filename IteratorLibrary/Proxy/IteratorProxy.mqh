@@ -3,7 +3,7 @@
 
 #include "..\..\Define\StdDefine.mqh"
 
-#define _tIteratorProxyBase __std(BaseIteratorProxy)
+#define _tIteratorProxyBase __std(IteratorProxyBase)
 #define _tIteratorProxy __std(IteratorProxy)
 #define _tIteratorAccess __std(SIteratorAccess)
 
