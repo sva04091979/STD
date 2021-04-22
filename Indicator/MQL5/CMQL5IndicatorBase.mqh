@@ -98,19 +98,15 @@ public:
    void AsSeries(bool asSeries) {ArraySetAsSeries(cBuff,asSeries);}
    int Size() const {return cSize;}
    double operator[](int i) {return cBuff[i];}
-   void MakeData(int hndl,uint begin,uint count);
-   void MakeData(int hndl,datetime begin,datetime end);
-   void MakeData(int hndl,datetime begin,uint count);
+   void MakeData(int hndl,uint begin,uint count)         {cSize=CopyBuffer(hndl,cId,begin,count,cBuff);}
+   void MakeData(int hndl,datetime begin,datetime end)   {cSize=CopyBuffer(hndl,cId,begin,end,cBuff);}
+   void MakeData(int hndl,datetime begin,uint count)     {cSize=CopyBuffer(hndl,cId,begin,count,cBuff);}
    bool AsSeries() {return ArrayIsSeries(cBuff);}
 };
 //--------------------------------------------------------------
 _tIndicatorBuffer::_tIndicatorBuffer():
    cSize(0){
    ArraySetAsSeries(cBuff,true);}
-//--------------------------------------------------------------
-void _tIndicatorBuffer::MakeData(int hndl,uint begin,uint count){
-   cSize=CopyBuffer(hndl,cId,begin,count,cBuff);
-}
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 template<typename DataType,typename AccessType>
@@ -127,7 +123,7 @@ public:
                         if (cName!=NULL) ChartIndicatorDelete(0,cSubWindow,cName);
                         IndicatorRelease(cData.Handle());}
    DataType*         Data()                                 {return &cData;}                    
-   DataType*         MakeData(uint count=0)                 {return MakeData(0,!count?iBars(cSymbol,cPeriod):count);}
+   DataType*         MakeData(uint count=0)                 {return MakeData(0,!count?BarsCalculated():count);}
    DataType*         MakeData(uint begin,uint count)        {return cData.Data(begin,count);}
    DataType*         MakeData(datetime begin,datetime end)  {return cData.Data(begin,end);}
    DataType*         MakeData(datetime begin,uint count)    {return cData.Data(begin,count);}
