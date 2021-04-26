@@ -15,7 +15,8 @@ template<typename DataType,typename AccessType>
 class _tIndicatorData{
 protected:
    int cHndl;
-   _tIndicatorData(int hndl):cHndl(hndl){}
+   int cBarsCalculated;
+   _tIndicatorData(int hndl):cHndl(hndl),cBarsCalculated(-1){}
 public:
    virtual void AsSeries(bool asSeries)=0;
    virtual uint BuffCount()=0;
@@ -26,7 +27,9 @@ public:
    virtual DataType* Data(datetime begin,uint count)=0;
    virtual bool AsSeries()=0;
    int Handle()   {return cHndl;}
-   int BarsCalculated() {return ::BarsCalculated(cHndl);}
+   int BarsCalculated() {return cBarsCalculated;}
+protected:
+   void SetBarsCount() {cBarsCalculated=::BarsCalculated(cHndl);}
 };
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -40,9 +43,9 @@ public:
    uint BuffCount() override final {return 1;}
    int Size() {return cBuff.Size();}
    double operator [](int i) override final {return cBuff[i];}
-   DataType* Data(uint begin,uint count)            {cBuff.MakeData(cHndl,begin,count); return &this;}
-   DataType* Data(datetime begin,datetime end)      {cBuff.MakeData(cHndl,begin,end); return &this;}
-   DataType* Data(datetime begin,uint count)        {cBuff.MakeData(cHndl,begin,count); return &this;}
+   DataType* Data(uint begin,uint count)            {SetBarsCount(); cBuff.MakeData(cHndl,begin,count); return &this;}
+   DataType* Data(datetime begin,datetime end)      {SetBarsCount(); cBuff.MakeData(cHndl,begin,end); return &this;}
+   DataType* Data(datetime begin,uint count)        {SetBarsCount(); cBuff.MakeData(cHndl,begin,count); return &this;}
    bool AsSeries() override final {return cBuff.AsSeries();}
 };
 ////////////////////////////////////////////////////////////////
