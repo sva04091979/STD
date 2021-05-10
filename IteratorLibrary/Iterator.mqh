@@ -16,6 +16,7 @@ bool IteratorLibraryUnitTest(){
    Print(_i(test));
    _i(test)=99;
    Print(_i(test));
+   delete test.__GetAccess().cIteratorProxy;
    return true;
 }
 

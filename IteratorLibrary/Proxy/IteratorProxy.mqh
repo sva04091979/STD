@@ -17,11 +17,10 @@ struct _tIteratorAccess{
 template<typename ProxyType,typename Type>
 class _tIteratorProxyBase{
 public:
-   Type cIteratorValue;
+   Type cValue;
    _tIteratorProxyBase(){}
-   _tIteratorProxyBase(const Type &val):cIteratorValue(val){}
+   _tIteratorProxyBase(const Type &val):cValue(val){}
    _tIteratorAccess<ProxyType> __GetAccess() {_tIteratorAccess<ProxyType> ret(&this); return ret;}
-   Type Dereference() {return cIteratorValue;}
 };
 
 template<typename Type>
