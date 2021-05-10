@@ -5,18 +5,24 @@
 
 #ifdef _UNIT_TEST_
 
-class ILUT_Test:public _tIteratorProxy<int>{
-public:
-   ILUT_Test(int val):_tIteratorProxy<int>(val){}
-};
 
 bool IteratorLibraryUnitTest(){
-   ILUT_Test a(19);
+   if (!IteratorUnitTest()) return false;
+   return true;
+}
+
+bool IteratorUnitTest(){
+   _tIteratorProxy<int> a(_rv(19));
+   _tIteratorProxy<int> b(_rv(22));
    _tIterator<int> test(a);
-   Print(_i(test));
+   _tIterator<int> x(a);
+   _tIterator<int> y(b);
+   if (x==y) return false;
+   y=x;
+   if (test!=y) return false;
+   if (_i(test)!=19) return false;
    _i(test)=99;
-   Print(_i(test));
-   delete test.__GetAccess().cIteratorProxy;
+   if (_i(test)!=99) return false;
    return true;
 }
 

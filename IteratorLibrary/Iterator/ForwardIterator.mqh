@@ -8,7 +8,7 @@
 #define _tForwardIteratorBase __std(BaseIterator)
 
 template<typename IteratorType>
-class STD_Iterator_PTR{
+class STD_ForwardIteratorBasePtr{
    
 }
 
