@@ -14,20 +14,29 @@ struct _tIteratorAccess{
    _tIteratorAccess(_tIteratorAccess<ProxyType> &other){this=other;}
 };
 
-template<typename ProxyType,typename Type>
-class _tIteratorProxyBase{
+template<typename Type>
+class STD_IteratorProxyOnce{
 public:
-   Type cValue;
-   _tIteratorProxyBase(){}
-   _tIteratorProxyBase(const Type &val):cValue(val){}
+   Type cValue[1];
+   STD_IteratorProxyOnce(){}
+   STD_IteratorProxyOnce(const Type &val){
+      cValue[0]=val;
+   }
+};
+
+template<typename ProxyType,typename ProxyBaseType,typename Type>
+class _tIteratorProxyBase:public ProxyBaseType{
+public:
+   _tIteratorProxyBase():ProxyBaseType<Type>(){}
+   _tIteratorProxyBase(const Type &val):ProxyBaseType<Type>(val){}
    _tIteratorAccess<ProxyType> __GetAccess() {_tIteratorAccess<ProxyType> ret(&this); return ret;}
 };
 
 template<typename Type>
-class _tIteratorProxy:public _tIteratorProxyBase<_tIteratorProxy,Type>{
+class _tIteratorProxy:public _tIteratorProxyBase<_tIteratorProxy,STD_IteratorProxyOnce<Type>,Type>{
 public:
-   _tIteratorProxy():_tIteratorProxyBase<_tIteratorProxy,Type>(){}
-   _tIteratorProxy(const Type &val):_tIteratorProxyBase<_tIteratorProxy,Type>(val){}
+   _tIteratorProxy():_tIteratorProxyBase<_tIteratorProxy,STD_IteratorProxyOnce<Type>,Type>(){}
+   _tIteratorProxy(const Type &val):_tIteratorProxyBase<_tIteratorProxy,STD_IteratorProxyOnce<Type>,Type>(val){}
 };
 
 #endif

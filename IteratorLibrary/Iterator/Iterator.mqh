@@ -6,24 +6,26 @@
 #define _tIterator __std(Iterator)
 #define _tIteratorBase __std(BaseIterator)
 
-#define _i(dIt) (dIt).__GetAccess().cIteratorProxy.cValue
+#define _i(dIt) (dIt).__GetAccess().cIteratorProxy.cValue[dIt.Index()]
 
 template<typename IteratorType,typename IteratorPtrType,typename ProxyType,typename Type>
 class STD_IteratorBasePtr{
 protected:
+   int cIndex;
    ProxyType* cProxy;
 public:
-   STD_IteratorBasePtr(const ProxyType &mProxy):cProxy((ProxyType*)&mProxy){}
+   STD_IteratorBasePtr(const ProxyType &mProxy):cIndex(0),cProxy((ProxyType*)&mProxy){}
+   STD_IteratorBasePtr(const ProxyType &mProxy,int index):cIndex(index),cProxy((ProxyType*)&mProxy){}
    _tIteratorAccess<ProxyType> __GetAccess() const {return cProxy.__GetAccess();}
-   void operator =(const IteratorPtrType &mOther) {cProxy=mOther.Proxy();}
-   void operator =(const ProxyType &mProxy) {cProxy=(ProxyType*)&mProxy;}
-   void operator =(const IteratorType &it) {cProxy=it.It().Proxy();}
+   void operator =(const IteratorPtrType &mOther) {cProxy=mOther.Proxy(); cIndex=mOther.Index();}
+   void operator =(const IteratorType &it) {IteratorPtrType* other=it.It(); cProxy=other.Proxy(); cIndex=other.Index();}
    bool operator ==(const IteratorPtrType &other) const {return cProxy==other.Proxy();}
    bool operator !=(const IteratorPtrType &other) const {return cProxy!=other.Proxy();}
    bool operator ==(const ProxyType &mProxy) const {return cProxy==&mProxy;}
    bool operator !=(const ProxyType &mProxy) const {return cProxy!=&mProxy;}
    bool operator ==(const IteratorType &it) const {return cProxy==it.It().Proxy();}
    bool operator !=(const IteratorType &it) const {return cProxy!=it.It().Proxy();}
+   int Index() const {return cIndex;}
 protected:
    ProxyType* Proxy() const {return cProxy;}
 };
@@ -43,6 +45,7 @@ public:
    bool operator !=(const IteratorPtrType &mProxy) const {return cIterator!=cIterator;}
    IteratorPtrType* It() {return &cIterator;}
    const IteratorPtrType* It() const {return &cIterator;}
+   int Index() const {return cIterator.Index();}
 };
 
 template<typename Type>
