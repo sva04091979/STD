@@ -50,7 +50,6 @@ public:
 };
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
-/*
 template<typename DataType>
 class _tIndicatorMultiData:public _tIndicatorData<DataType,_tIndicatorBuffer*>{
 protected:
@@ -62,12 +61,12 @@ protected:
 public:
    void AsSeries(bool asSeries) override final;
    uint BuffCount() override final {return cCount;}
-   int Bars(int i) {return cBuff[i].Size();}
+   int Size() {return !cCount?0:cBuff[0].Size();}
    _tIndicatorBuffer* operator [](int i) override final {return &cBuff[i];}
    DataType* Data(uint begin,uint count)            {cBuff.MakeData(begin,count); return &this;}
    DataType* Data(datetime begin,datetime end)      {cBuff.MakeData(begin,end); return &this;}
    DataType* Data(datetime begin,uint count)        {cBuff.MakeData(begin,count); return &this;}
-   bool operator !() {return !cCount||cCount!=ArraySize(cBuff);}
+   bool operator !() {return !cCount;}
    bool AsSeries() override final {return cAsSeries;}
 };
 //--------------------------------------------------------------
@@ -88,7 +87,6 @@ void _tIndicatorMultiData::AsSeries(bool asSeries){
    for (int i=0,size=ArraySize(cBuff);i<size;++i)
       cBuff[i].AsSeries(asSeries);
 }
-*/
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 class _tIndicatorBuffer{
