@@ -170,5 +170,12 @@ protected:
    _tIndicatorOneBuffer(int hndl,string symbol,ENUM_TIMEFRAMES period):
       _tIndicatorBase<DataType,double>(hndl,symbol,period){}
 };
-
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+template<typename DataType>
+class _tIndicatorMultiBuffer:public _tIndicatorBase<DataType,_tIndicatorBuffer>{
+protected:
+   _tIndicatorMultiBuffer(int hndl,string symbol,ENUM_TIMEFRAMES period):
+      _tIndicatorBase<DataType,_tIndicatorBuffer>(hndl,symbol,period){}
+};
 #endif
