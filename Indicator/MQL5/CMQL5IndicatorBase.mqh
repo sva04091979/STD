@@ -28,8 +28,7 @@ public:
    virtual bool AsSeries()=0;
    int Handle()   {return cHndl;}
    int BarsCalculated() {return cBarsCalculated;}
-protected:
-   void SetBarsCount() {cBarsCalculated=::BarsCalculated(cHndl);}
+   int CheckBarsCount() {return cBarsCalculated=::BarsCalculated(cHndl);}
 };
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -43,9 +42,9 @@ public:
    uint BuffCount() override final {return 1;}
    int Size() {return cBuff.Size();}
    double operator [](int i) override final {return cBuff[i];}
-   DataType* Data(uint begin,uint count)            {SetBarsCount(); cBuff.MakeData(cHndl,begin,count); return &this;}
-   DataType* Data(datetime begin,datetime end)      {SetBarsCount(); cBuff.MakeData(cHndl,begin,end); return &this;}
-   DataType* Data(datetime begin,uint count)        {SetBarsCount(); cBuff.MakeData(cHndl,begin,count); return &this;}
+   DataType* Data(uint begin,uint count) override final        {CheckBarsCount(); cBuff.MakeData(cHndl,begin,count); return &this;}
+   DataType* Data(datetime begin,datetime end) override final  {CheckBarsCount(); cBuff.MakeData(cHndl,begin,end); return &this;}
+   DataType* Data(datetime begin,uint count) override final    {CheckBarsCount(); cBuff.MakeData(cHndl,begin,count); return &this;}
    bool AsSeries() override final {return cBuff.AsSeries();}
 };
 ////////////////////////////////////////////////////////////////
@@ -56,27 +55,27 @@ protected:
    _tIndicatorBuffer cBuff[];
    uint cCount;
    bool cAsSeries;
-   _tIndicatorMultiData(int hndl):_tIndicatorData<DataType,_tIndicatorBuffer>(hndl),cCount(0){}
    _tIndicatorMultiData(int hndl,uint buffCount);
 public:
    void AsSeries(bool asSeries) override final;
    uint BuffCount() override final {return cCount;}
    int Size() {return !cCount?0:cBuff[0].Size();}
    _tIndicatorBuffer* operator [](int i) override final {return &cBuff[i];}
-   DataType* Data(uint begin,uint count)            {cBuff.MakeData(begin,count); return &this;}
-   DataType* Data(datetime begin,datetime end)      {cBuff.MakeData(begin,end); return &this;}
-   DataType* Data(datetime begin,uint count)        {cBuff.MakeData(begin,count); return &this;}
+   DataType* Data(uint begin,uint count) override final;
+   DataType* Data(datetime begin,datetime end) override final;
+   DataType* Data(datetime begin,uint count) override final;
    bool operator !() {return !cCount;}
    bool AsSeries() override final {return cAsSeries;}
 };
 //--------------------------------------------------------------
 template<typename DataType>
 _tIndicatorMultiData::_tIndicatorMultiData(int hndl,uint buffCount):
-   _tIndicatorData<DataType,_tIndicatorBuffer>(hndl){
-   if ((int)buffCount==ArrayResize(cBuff,buffCount)){
+   _tIndicatorData<DataType,_tIndicatorBuffer*>(hndl){
+   if (buffCount!=0&&(int)buffCount==ArrayResize(cBuff,buffCount)){
       cCount=buffCount;
       for (uint i=0;i<buffCount;++i)
          cBuff[i].Id(i);
+      cAsSeries=cBuff[0].AsSeries();
    }
    else cCount=0;
 }
@@ -84,8 +83,32 @@ _tIndicatorMultiData::_tIndicatorMultiData(int hndl,uint buffCount):
 template<typename DataType>
 void _tIndicatorMultiData::AsSeries(bool asSeries){
    cAsSeries=asSeries;
-   for (int i=0,size=ArraySize(cBuff);i<size;++i)
+   for (uint i=0;i<cCount;++i)
       cBuff[i].AsSeries(asSeries);
+}
+//--------------------------------------------------------------
+template<typename DataType>
+DataType* _tIndicatorMultiData::Data(uint begin,uint count){
+   CheckBarsCount();
+   for (uint i=0;i<cCount;++i)
+      cBuff[i].MakeData(cHndl,begin,count);
+   return &this;
+}
+//--------------------------------------------------------------
+template<typename DataType>
+DataType* _tIndicatorMultiData::Data(datetime begin,datetime end){
+   CheckBarsCount();
+   for (uint i=0;i<cCount;++i)
+      cBuff[i].MakeData(cHndl,begin,end);
+   return &this;
+}
+//--------------------------------------------------------------
+template<typename DataType>
+DataType* _tIndicatorMultiData::Data(datetime begin,uint count){
+   CheckBarsCount();
+   for (uint i=0;i<cCount;++i)
+      cBuff[i].MakeData(cHndl,begin,count);
+   return &this;
 }
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -124,7 +147,7 @@ public:
                         if (cName!=NULL) ChartIndicatorDelete(0,cSubWindow,cName);
                         IndicatorRelease(cData.Handle());}
    DataType*         Data()                                 {return &cData;}                    
-   DataType*         MakeData(uint count=0)                 {return MakeData(0,!count?BarsCalculated():count);}
+   DataType*         MakeData(uint count=0)                 {return MakeData(0,!count?cData.CheckBarsCount():count);}
    DataType*         MakeData(uint begin,uint count)        {return cData.Data(begin,count);}
    DataType*         MakeData(datetime begin,datetime end)  {return cData.Data(begin,end);}
    DataType*         MakeData(datetime begin,uint count)    {return cData.Data(begin,count);}
@@ -138,7 +161,7 @@ public:
    int               Handle()                               {return cData.Handle();}
    int               BarsCalculated()                       {return cData.BarsCalculated();}
    bool              AsSeries()                             {return cData.AsSeries();}
-   AccessType        operator [](int i)                     {return cData[i];}       
+   virtual AccessType        operator [](int i)=0;       
 };
 //------------------------------------------------------------------------------
 template<typename DataType,typename AccessType>
@@ -169,13 +192,17 @@ class _tIndicatorOneBuffer:public _tIndicatorBase<DataType,double>{
 protected:
    _tIndicatorOneBuffer(int hndl,string symbol,ENUM_TIMEFRAMES period):
       _tIndicatorBase<DataType,double>(hndl,symbol,period){}
+public:
+   double operator [](int i) override final {return cData[i];}
 };
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 template<typename DataType>
-class _tIndicatorMultiBuffer:public _tIndicatorBase<DataType,_tIndicatorBuffer>{
+class _tIndicatorMultiBuffer:public _tIndicatorBase<DataType,_tIndicatorBuffer*>{
 protected:
    _tIndicatorMultiBuffer(int hndl,string symbol,ENUM_TIMEFRAMES period):
       _tIndicatorBase<DataType,_tIndicatorBuffer>(hndl,symbol,period){}
+public:
+   _tIndicatorBuffer* operator [](int i) override final {return &cData[i];}
 };
 #endif
