@@ -36,7 +36,9 @@ template<typename DataType>
 class _tIndicatorSingleData:public _tIndicatorData<DataType,double>{
 protected:
    _tIndicatorBuffer cBuff;
-   _tIndicatorSingleData(int hndl):_tIndicatorData<DataType,double>(hndl){}
+   _tIndicatorSingleData(int hndl):_tIndicatorData<DataType,double>(hndl){
+         cBuff.AsSeries(true);
+      }
 public:
    void AsSeries(bool asSeries) override final {cBuff.AsSeries(asSeries);}
    uint BuffCount() override final {return 1;}
@@ -73,9 +75,10 @@ _tIndicatorMultiData::_tIndicatorMultiData(int hndl,uint buffCount):
    _tIndicatorData<DataType,_tIndicatorBuffer*>(hndl){
    if (buffCount!=0&&(int)buffCount==ArrayResize(cBuff,buffCount)){
       cCount=buffCount;
-      for (uint i=0;i<buffCount;++i)
+      for (uint i=0;i<buffCount;++i){
          cBuff[i].Id(i);
-      cAsSeries=cBuff[0].AsSeries();
+         cBuff[0].AsSeries(cAsSeries=true);
+      }
    }
    else cCount=0;
 }
@@ -113,6 +116,7 @@ DataType* _tIndicatorMultiData::Data(datetime begin,uint count){
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 class _tIndicatorBuffer{
+protected:
    double cBuff[];
    uint cId;
    int cSize;
@@ -121,7 +125,7 @@ public:
    void Id(uint id) {cId=id;}
    void AsSeries(bool asSeries) {ArraySetAsSeries(cBuff,asSeries);}
    int Size() const {return cSize;}
-   double operator[](int i) {return cBuff[i];}
+   double operator[](int i) {return i>cSize?EMPTY_VALUE:cBuff[i];}
    void MakeData(int hndl,uint begin,uint count)         {cSize=CopyBuffer(hndl,cId,begin,count,cBuff);}
    void MakeData(int hndl,datetime begin,datetime end)   {cSize=CopyBuffer(hndl,cId,begin,end,cBuff);}
    void MakeData(int hndl,datetime begin,uint count)     {cSize=CopyBuffer(hndl,cId,begin,count,cBuff);}
@@ -139,7 +143,7 @@ protected:
    DataType          cData;
    string            cSymbol;
    string            cName;
-   ENUM_TIMEFRAMES   cPeriod;
+   ENUM_TIMEFRAMES   cFrame;
    int               cSubWindow;
                      _tIndicatorBase(int mHndl,string mSymbol,ENUM_TIMEFRAMES mPeriod);
 public:
@@ -156,12 +160,12 @@ public:
    void              AsSeries(bool asSeries)                {cData.AsSeries(asSeries);}
    string            Symbol()                               {return cSymbol;}
    string            Name()                                 {return cName;}
-   ENUM_TIMEFRAMES   TimeFrame()                            {return cPeriod;}
+   ENUM_TIMEFRAMES   TimeFrame()                            {return cFrame;}
    uint              BuffCount()                            {return cData.BuffCount();}
    int               Handle()                               {return cData.Handle();}
    int               BarsCalculated()                       {return cData.BarsCalculated();}
    bool              AsSeries()                             {return cData.AsSeries();}
-   virtual AccessType        operator [](int i)=0;       
+   AccessType        operator [](int i)                     {return cData[i];}       
 };
 //------------------------------------------------------------------------------
 template<typename DataType,typename AccessType>
@@ -169,7 +173,7 @@ _tIndicatorBase::_tIndicatorBase(int mHndl,string mSymbol,ENUM_TIMEFRAMES mPerio
    cData(mHndl),
    cSymbol(mSymbol==NULL?_Symbol:mSymbol),
    cName(NULL),
-   cPeriod(mPeriod),
+   cFrame(mPeriod),
    cSubWindow(-1){}
 //--------------------------------------------------------------------------------
 template<typename DataType,typename AccessType>
@@ -182,7 +186,7 @@ void _tIndicatorBase::Show(int subWindow){
 //---------------------------------------------------------------------------------
 template<typename DataType,typename AccessType>
 DataType* _tIndicatorBase::MakeData(uint begin,datetime end){
-   datetime _begin=!begin?TimeCurrent():iTime(cSymbol,cPeriod,begin-1);
+   datetime _begin=!begin?TimeCurrent():iTime(cSymbol,cFrame,begin-1);
    return cData.Data(_begin,end);
 }
 ////////////////////////////////////////////////////////////////
@@ -192,8 +196,6 @@ class _tIndicatorOneBuffer:public _tIndicatorBase<DataType,double>{
 protected:
    _tIndicatorOneBuffer(int hndl,string symbol,ENUM_TIMEFRAMES period):
       _tIndicatorBase<DataType,double>(hndl,symbol,period){}
-public:
-   double operator [](int i) override final {return cData[i];}
 };
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -201,8 +203,6 @@ template<typename DataType>
 class _tIndicatorMultiBuffer:public _tIndicatorBase<DataType,_tIndicatorBuffer*>{
 protected:
    _tIndicatorMultiBuffer(int hndl,string symbol,ENUM_TIMEFRAMES period):
-      _tIndicatorBase<DataType,_tIndicatorBuffer>(hndl,symbol,period){}
-public:
-   _tIndicatorBuffer* operator [](int i) override final {return &cData[i];}
+      _tIndicatorBase<DataType,_tIndicatorBuffer*>(hndl,symbol,period){}
 };
 #endif
