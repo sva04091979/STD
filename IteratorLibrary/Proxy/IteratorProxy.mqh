@@ -27,8 +27,8 @@ public:
 template<typename ProxyType,typename ProxyBaseType,typename Type>
 class _tIteratorProxyBase:public ProxyBaseType{
 public:
-   _tIteratorProxyBase():ProxyBaseType<Type>(){}
-   _tIteratorProxyBase(const Type &val):ProxyBaseType<Type>(val){}
+   _tIteratorProxyBase():ProxyBaseType(){}
+   _tIteratorProxyBase(const Type &val):ProxyBaseType(val){}
    _tIteratorAccess<ProxyType> __GetAccess() {_tIteratorAccess<ProxyType> ret(&this); return ret;}
 };
 
