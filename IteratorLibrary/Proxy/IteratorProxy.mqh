@@ -10,7 +10,8 @@
 template<typename ProxyType>
 struct _tIteratorAccess{
    ProxyType* cIteratorProxy;
-   _tIteratorAccess(ProxyType* proxy):cIteratorProxy(proxy){}
+   int cIndex;
+   _tIteratorAccess(ProxyType* proxy,int index):cIteratorProxy(proxy),cIndex(index){}
    _tIteratorAccess(_tIteratorAccess<ProxyType> &other){this=other;}
 };
 
@@ -29,7 +30,7 @@ class _tIteratorProxyBase:public ProxyBaseType{
 public:
    _tIteratorProxyBase():ProxyBaseType(){}
    _tIteratorProxyBase(const Type &val):ProxyBaseType(val){}
-   _tIteratorAccess<ProxyType> __GetAccess() {_tIteratorAccess<ProxyType> ret(&this); return ret;}
+   _tIteratorAccess<ProxyType> __GetAccess(int index) {_tIteratorAccess<ProxyType> ret(&this,index); return ret;}
 };
 
 template<typename Type>

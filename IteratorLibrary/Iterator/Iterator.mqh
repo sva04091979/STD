@@ -6,7 +6,7 @@
 #define _tIterator __std(Iterator)
 #define _tIteratorBase __std(BaseIterator)
 
-#define _i(dIt) (dIt).__GetAccess().cIteratorProxy.cValue[dIt.Index()]
+#define _i(dIt) (dIt).__GetAccess().cIteratorProxy.cValue[cIndex]
 
 template<typename IteratorType,typename IteratorPtrType,typename ProxyType,typename Type>
 class STD_IteratorBasePtr{
@@ -16,7 +16,7 @@ protected:
 public:
    STD_IteratorBasePtr(const ProxyType &mProxy):cIndex(0),cProxy((ProxyType*)&mProxy){}
    STD_IteratorBasePtr(const ProxyType &mProxy,int index):cIndex(index),cProxy((ProxyType*)&mProxy){}
-   _tIteratorAccess<ProxyType> __GetAccess() const {return cProxy.__GetAccess();}
+   _tIteratorAccess<ProxyType> __GetAccess() const {return cProxy.__GetAccess(cIndex);}
    void operator =(const IteratorPtrType &mOther) {cProxy=mOther.Proxy(); cIndex=mOther.Index();}
    void operator =(const IteratorType &it) {IteratorPtrType* other=it.It(); cProxy=other.Proxy(); cIndex=other.Index();}
    bool operator ==(const IteratorPtrType &other) const {return cProxy==other.Proxy();}
@@ -29,6 +29,9 @@ public:
 protected:
    ProxyType* Proxy() const {return cProxy;}
 };
+
+template<typename IteratorType,typename IteratorPtrType,typename ProxyType,typename Type>
+_tIteratorAccess<ProxyType> __GetAccess(STD_IteratorBasePtr<IteratorType,IteratorPtrType,ProxyType,Type>* ptr) {return ptr.__GetAccess();}
 
 template<typename IteratorType,typename IteratorPtrType,typename ProxyType,typename Type>
 struct _tIteratorBase{
@@ -47,6 +50,9 @@ public:
    const IteratorPtrType* It() const {return &cIterator;}
    int Index() const {return cIterator.Index();}
 };
+
+template<typename IteratorType,typename IteratorPtrType,typename ProxyType,typename Type>
+_tIteratorAccess<ProxyType> __GetAccess(_tIteratorBase<IteratorType,IteratorPtrType,ProxyType,Type> &it) {return it.__GetAccess();}
 
 template<typename Type>
 class STD_IteratorPtr:public STD_IteratorBasePtr<_tIterator<Type>,STD_IteratorPtr,_tIteratorProxy<Type>,Type>{
