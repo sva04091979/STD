@@ -7,14 +7,6 @@
 #define _tIteratorProxy __std(IteratorProxy)
 #define _tIteratorAccess __std(SIteratorAccess)
 
-template<typename ProxyType>
-struct _tIteratorAccess{
-   ProxyType* cIteratorProxy;
-   int cIndex;
-   _tIteratorAccess(ProxyType* proxy,int index):cIteratorProxy(proxy),cIndex(index){}
-   _tIteratorAccess(_tIteratorAccess<ProxyType> &other){this=other;}
-};
-
 template<typename Type>
 class STD_IteratorProxyOnce{
 public:
@@ -30,7 +22,6 @@ class _tIteratorProxyBase:public ProxyBaseType{
 public:
    _tIteratorProxyBase():ProxyBaseType(){}
    _tIteratorProxyBase(const Type &val):ProxyBaseType(val){}
-   _tIteratorAccess<ProxyType> __GetAccess(int index) {_tIteratorAccess<ProxyType> ret(&this,index); return ret;}
 };
 
 template<typename Type>

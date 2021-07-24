@@ -19,12 +19,15 @@ bool IteratorUnitTest(){
    _tIterator<int> test(a);
    _tIterator<int> x(a);
    _tIterator<int> y(b);
+   _tIteratorProxy<double> xxx(_rv(0.32));
+   const _tIterator<double> constTest(xxx);
    if (x==y) return false;
    y=x;
    if (test!=y) return false;
    if (_i(test)!=19) return false;
    _i(test)=99;
    if (_i(test)!=99) return false;
+   if (_i(constTest)!=0.32) return false; 
    return true;
 }
 //----------------------------------------------------
