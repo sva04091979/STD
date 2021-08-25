@@ -5,30 +5,36 @@
 
 #define _tIteratorProxyBase __std(IteratorProxyBase)
 #define _tIteratorProxy __std(IteratorProxy)
-#define _tIteratorAccess __std(SIteratorAccess)
+#define _tIteratorAccess __std(IteratorAccess)
 
 template<typename Type>
-class STD_IteratorProxyOnce{
+class _tIteratorAccess{
 public:
-   Type cValue[1];
-   STD_IteratorProxyOnce(){}
-   STD_IteratorProxyOnce(const Type &val){
-      cValue[0]=val;
+   Type value;
+   _tIteratorAccess(){}
+   _tIteratorAccess(const _tIteratorAccess<Type>& other) {this=other;}
+   _tIteratorAccess(const Type& val):value(val){}
+   _tIteratorAccess<Type>* operator=(const _tIteratorAccess<Type>& other){
+      this=other;
+      return &this;
    }
+   _tIteratorAccess<Type>* operator=(const Type& val){
+      value=val;
+      return &this;
+   }
+   bool operator ==(const _tIteratorAccess<Type>& other) {return &this==&other;}
+   bool operator !=(const _tIteratorAccess<Type>& other) {return !(operator ==(other));}
 };
 
-template<typename ProxyType,typename ProxyBaseType,typename Type>
-class _tIteratorProxyBase:public ProxyBaseType{
+template<typename AccessType,typename Type>
+class _tIteratorProxyBase{
+   AccessType* cAccess;
 public:
-   _tIteratorProxyBase():ProxyBaseType(){}
-   _tIteratorProxyBase(const Type &val):ProxyBaseType(val){}
+   _tIteratorProxyBase():cAccess(NULL){}
+   _tIteratorProxyBase(_tIteratorAccess<Type> &val):cAccess(&val) {}
+   AccessType* __GetAccess() const {return cAccess;}
 };
 
-template<typename Type>
-class _tIteratorProxy:public _tIteratorProxyBase<_tIteratorProxy,STD_IteratorProxyOnce<Type>,Type>{
-public:
-   _tIteratorProxy():_tIteratorProxyBase<_tIteratorProxy,STD_IteratorProxyOnce<Type>,Type>(){}
-   _tIteratorProxy(const Type &val):_tIteratorProxyBase<_tIteratorProxy,STD_IteratorProxyOnce<Type>,Type>(val){}
-};
+
 
 #endif

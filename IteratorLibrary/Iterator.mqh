@@ -6,20 +6,22 @@
 
 #ifdef _UNIT_TEST_
 
-
 bool IteratorLibraryUnitTest(){
    if (!IteratorUnitTest()) return false;
-   if (!ForwardIteratorUnitTest()) return false;
+//   if (!ForwardIteratorUnitTest()) return false;
    return true;
 }
 //----------------------------------------------------
 bool IteratorUnitTest(){
-   _tIteratorProxy<int> a(_rv(19));
-   _tIteratorProxy<int> b(_rv(22));
+   _tIteratorAccess<int> _a(_rv(19));
+   _tIteratorAccess<int> _b(_rv(22));
+   _tIteratorProxy<int> a(_a);
+   _tIteratorProxy<int> b(_b);
    _tIterator<int> test(a);
    _tIterator<int> x(a);
    _tIterator<int> y(b);
-   _tIteratorProxy<double> xxx(_rv(0.32));
+   _tIteratorAccess<double> _xxx(_rv(0.32));
+   _tIteratorProxy<double> xxx(_xxx);
    const _tIterator<double> constTest(xxx);
    if (x==y) return false;
    y=x;
@@ -31,7 +33,7 @@ bool IteratorUnitTest(){
    return true;
 }
 //----------------------------------------------------
-bool ForwardIteratorUnitTest(){
+/*bool ForwardIteratorUnitTest(){
    _tForwardIteratorProxy<int> a(_rv(1));
    _tForwardIteratorProxy<int> b(_rv(2),a);
    _tForwardIterator<int> test(b);
@@ -44,7 +46,7 @@ bool ForwardIteratorUnitTest(){
    Print(_i(++x));
    Print(_i(x));
    return true;
-}
+}*/
 
 #endif
 
