@@ -8,17 +8,6 @@
 #define _tForwardIteratorBase __std(ForwardIteratorBase)
 
 template<typename IteratorType,typename IteratorPtrType,typename ProxyType,typename Type>
-class STD_ForwardIteratorBasePtr:public STD_IteratorBasePtr<IteratorType,IteratorPtrType,ProxyType,Type>{
-public:
-   STD_ForwardIteratorBasePtr(const ProxyType &proxy):
-      STD_IteratorBasePtr<IteratorType,IteratorPtrType,ProxyType,Type>(proxy){}
-   IteratorPtrType* Next(){
-      cProxy=cProxy.Next();
-      return &this;
-   }
-};
-
-template<typename IteratorType,typename IteratorPtrType,typename ProxyType,typename Type>
 struct _tForwardIteratorBase:public _tIteratorBase<IteratorType,IteratorPtrType,ProxyType,Type>{
 public:
    _tForwardIteratorBase(const ProxyType &mProxy):_tIteratorBase<IteratorType,IteratorPtrType,ProxyType,Type>(mProxy){}

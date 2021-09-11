@@ -1,5 +1,5 @@
-#ifndef _STD_ITERATOR_
-#define _STD_ITERATOR_
+#ifndef _STD_ITERATOR_LIBRARY_
+#define _STD_ITERATOR_LIBRARY_
 
 #include "Iterator\Iterator.mqh"
 #include "Iterator\ForwardIterator.mqh"

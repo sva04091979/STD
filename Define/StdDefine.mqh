@@ -162,10 +162,13 @@ void TempCondition(T &fValue,EPushPop fAct){
 
 END_SPACE
 
-class CSTDUnitTestBase{
-public:
-   CSTDUnitTestBase(){}
-   CSTDUnitTestBase(CSTDUnitTestBase &mOther){this=mOther;}
+#ifdef _UNIT_TEST_
+
+struct STD_UnitTestStruct{
+   int i;
+   double d;
 };
+
+#endif
 
 #endif
