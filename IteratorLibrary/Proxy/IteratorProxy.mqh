@@ -15,11 +15,11 @@ public:
    _tIteratorAccess(){}
    _tIteratorAccess(const _tIteratorAccess<Type>& other) {this=other;}
    _tIteratorAccess(const Type& val){value=val;}
-   _tIteratorAccess<Type>* operator=(const _tIteratorAccess<Type>& other){
+   const _tIteratorAccess<Type>* operator=(const _tIteratorAccess<Type>& other){
       this=other;
       return &this;
    }
-   _tIteratorAccess<Type>* operator=(const Type& val){
+   const _tIteratorAccess<Type>* operator=(const Type& val){
       value=val;
       return &this;
    }
