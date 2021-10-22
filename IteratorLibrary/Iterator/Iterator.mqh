@@ -14,8 +14,8 @@ struct _tIteratorBase{
 protected:
    ProxyType* cProxy;
 public:
-   _tIteratorBase(ProxyType &mProxy):cProxy(&mProxy){}
-   _tIteratorBase(_tIteratorBase<ProxyType,AccessType>& other):cProxy(other.cProxy){}
+   _tIteratorBase(const ProxyType &mProxy):cProxy(&mProxy){}
+   _tIteratorBase(const _tIteratorBase<ProxyType,AccessType>& other):cProxy(other.cProxy){}
    AccessType* __GetAccess() const {return cProxy.__GetAccess();}
    void operator =(const _tIteratorBase<ProxyType,AccessType> &it) {cProxy=it.cProxy;}
    bool operator ==(const _tIteratorBase<ProxyType,AccessType> &it) const {return cProxy.__GetAccess()==it.__GetAccess();}

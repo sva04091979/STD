@@ -3,18 +3,14 @@
 
 #include <STD\Define\StdDefine.mqh>
 
-#define _tdeclContainer __decl(CContainer)
+#define _tContainer __std(CContainer)
 
 NAMESPACE(STD)
 
-class _tdeclContainer{
-protected:
-   _tSizeT cSize;
-   _tdeclContainer():cSize(0){}
-   _tdeclContainer(_tSizeT _size):cSize(_size){}
+class _tContainer{
 public:
-   _tSizeT Size() const {return cSize;}
-   bool IsEmpty() const {return !cSize;}
+   virtual bool IsEmpty() const =0;
+   virtual void Clear()=0;
 };
 
 END_SPACE

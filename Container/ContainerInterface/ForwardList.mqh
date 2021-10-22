@@ -2,16 +2,16 @@
 #define _STD_I_FORWARD_LIST_
 
 #include "IContainer.mqh"
+#include "..\..\IteratorLibrary\Iterator\ForwardIterator.mqh"
 
-#define _tdeclIForwardList __decl(IForwardList)
 
-NAMESPACE(STD)
+#define _tForwardList __std(ForwardList)
 
-template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>
-class _tdeclIForwardList:public _tdeclContainer{
+template<typename Type>
+class _tForwardList:public _tContainer{
 protected:
-   ProxyType cEnd;
-   NodeType* cFront;
+   _tForwardIterator<Type> cEnd;
+   _tForwardIteratorProxy<Type>* cFront;
 protected:
    _tdeclIForwardList():cEnd((ContainerType*)&this,EndNode()),cFront(EndNode()){}
    _tdeclIForwardList(Type &mArr[]);
@@ -32,7 +32,7 @@ public:
    void Clear();
    void ClearAfter(const IteratorType &mIt) {ClearAfter(mIt.Proxy());}
    void ClearAfter(const ProxyType &mWrape);
-
+   bool IsEmpty() const override final {return cFront.__GetAccess()==cEnd.__GetAccess();}
 };
 //----------------------------------------------------------
 template<typename ContainerType,typename IteratorType,typename ProxyType,typename NodeType,typename NodeTypeEnd,typename Type>

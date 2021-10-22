@@ -1,6 +1,8 @@
 #ifndef _STD_FORWARD_ITERATOR_PROXY_
 #define _STD_FORWARD_ITERATOR_PROXY_
 
+#define _UNIT_TEST_
+
 #include "IteratorProxy.mqh"
 
 #define _tForwardIteratorProxy __std(ForwardIteratorProxy)
