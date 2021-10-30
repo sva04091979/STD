@@ -1,6 +1,8 @@
 #ifndef _STD_I_ITERATOR_
 #define _STD_I_ITERATOR_
 
+//#define _UNIT_TEST_
+
 #include "..\Proxy\IteratorProxy.mqh"
 
 #define _tIterator __std(Iterator)
@@ -14,7 +16,7 @@ struct _tIteratorBase{
 protected:
    ProxyType* cProxy;
 public:
-   _tIteratorBase(const ProxyType &mProxy):cProxy(&mProxy){}
+   _tIteratorBase(const ProxyType &mProxy):cProxy((ProxyType*)&mProxy){}
    _tIteratorBase(const _tIteratorBase<ProxyType,AccessType>& other):cProxy(other.cProxy){}
    AccessType* __GetAccess() const {return cProxy.__GetAccess();}
    void operator =(const _tIteratorBase<ProxyType,AccessType> &it) {cProxy=it.cProxy;}
