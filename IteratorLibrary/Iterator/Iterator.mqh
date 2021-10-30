@@ -1,7 +1,7 @@
 #ifndef _STD_I_ITERATOR_
 #define _STD_I_ITERATOR_
 
-#define _UNIT_TEST_
+//#define _UNIT_TEST_
 
 #include "..\Proxy\IteratorProxy.mqh"
 

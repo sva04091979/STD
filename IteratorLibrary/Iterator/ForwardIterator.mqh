@@ -1,6 +1,8 @@
 #ifndef _STD_I_FORWARD_ITERATOR_
 #define _STD_I_FORWARD_ITERATOR_
 
+#define _UNIT_TEST_
+
 #include "Iterator.mqh"
 #include "..\Proxy\ForwardProxy.mqh"
 
@@ -13,14 +15,8 @@ struct _tForwardIteratorBase:public _tIteratorBase<ProxyType,AccessType>{
 public:
    _tForwardIteratorBase(const ProxyType &mProxy):_tIteratorBase<ProxyType,AccessType>(mProxy){}
    _tForwardIteratorBase(const _tForwardIteratorBase<ProxyType,AccessType> &mOther):_tIteratorBase<ProxyType,AccessType>(mOther){}
-   _tForwardIteratorBase operator ++() {return cProxy=cProxy.Next();}
-};
-
-template<typename Type>
-class STD_ForwardIteratorPtr:public STD_ForwardIteratorBasePtr<_tForwardIterator<Type>,STD_ForwardIteratorPtr,_tForwardIteratorProxy<Type>,Type>{
-public:
-   STD_ForwardIteratorPtr(const _tForwardIteratorProxy<Type> &proxy):
-      STD_ForwardIteratorBasePtr<_tForwardIterator<Type>,STD_ForwardIteratorPtr,_tForwardIteratorProxy<Type>,Type>(proxy){}
+   ProxyType* operator ++() {return cProxy=cProxy.Next();}
+   _tForwardIteratorBase operator ++(int);
 };
 
 template<typename Type>
