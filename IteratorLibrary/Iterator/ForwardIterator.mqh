@@ -16,7 +16,11 @@ public:
    _tForwardIteratorBase(const ProxyType &mProxy):_tIteratorBase<ProxyType,AccessType>(mProxy){}
    _tForwardIteratorBase(const _tForwardIteratorBase<ProxyType,AccessType> &mOther):_tIteratorBase<ProxyType,AccessType>(mOther){}
    ProxyType* operator ++() {return cProxy=cProxy.Next();}
-   _tForwardIteratorBase operator ++(int);
+   _tForwardIteratorBase<ProxyType,AccessType> operator ++(int){
+      _tForwardIteratorBase<ProxyType,AccessType> ret(this);
+      cProxy=cProxy.Next();
+      return ret;
+   }
 };
 
 template<typename Type>
