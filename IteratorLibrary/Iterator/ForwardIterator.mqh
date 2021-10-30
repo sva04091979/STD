@@ -13,7 +13,7 @@ struct _tForwardIteratorBase:public _tIteratorBase<ProxyType,AccessType>{
 public:
    _tForwardIteratorBase(const ProxyType &mProxy):_tIteratorBase<ProxyType,AccessType>(mProxy){}
    _tForwardIteratorBase(const _tForwardIteratorBase<ProxyType,AccessType> &mOther):_tIteratorBase<ProxyType,AccessType>(mOther){}
-   _tForwardIteratorBase operator ++() {return cIterator.Next();}
+   _tForwardIteratorBase operator ++() {return cProxy=cProxy.Next();}
 };
 
 template<typename Type>
