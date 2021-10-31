@@ -24,9 +24,19 @@ public:
 };
 
 template<typename Type>
-struct _tForwardIterator:public _tForwardIteratorBase<_tForwardIterator,STD_ForwardIteratorPtr<Type>,_tForwardIteratorProxy<Type>,Type>{
+struct _tForwardIterator:public _tForwardIteratorBase<_tForwardIteratorProxy<Type>,_tIteratorAccess<Type>>{
    _tForwardIterator(const _tForwardIteratorProxy<Type> &proxy):
-      _tForwardIteratorBase<_tForwardIterator,STD_ForwardIteratorPtr<Type>,_tForwardIteratorProxy<Type>,Type>(proxy){}
+      _tForwardIteratorBase<_tForwardIteratorProxy<Type>,_tIteratorAccess<Type>>(proxy){}
+   _tForwardIterator(const _tForwardIterator<Type> &other):
+      _tForwardIteratorBase<_tForwardIteratorProxy<Type>,_tIteratorAccess<Type>>(other){}
+};
+
+template<typename Type>
+struct _tForwardConstIterator:public _tForwardIteratorBase<_tForwardConstIteratorProxy<Type>,const _tIteratorAccess<Type>>{
+   _tForwardConstIterator(const _tForwardConstIteratorProxy<Type> &proxy):
+      _tForwardIteratorBase<_tForwardConstIteratorProxy<Type>,const _tIteratorAccess<Type>>(proxy){}
+   _tForwardConstIterator(const _tForwardConstIterator<Type> &other):
+      _tForwardIteratorBase<_tForwardConstIteratorProxy<Type>,const _tIteratorAccess<Type>>(other){}
 };
 
 #endif
