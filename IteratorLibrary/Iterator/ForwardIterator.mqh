@@ -58,34 +58,10 @@ bool __STD__Test__ForwardIterator(){
    ASSERT(a2==a0,"");
    return true;
 }
-/*
-bool __STD__Test__ForwardConstIterator(){
-   const _tIteratorAccess<int> __a(_rv(5));
-   const _tIteratorAccess<int> __ax(_rv(15));
-   const _tIteratorAccess<STD_UnitTestStruct> __b;
-   ((_tIteratorAccess<STD_UnitTestStruct>)__b).value.i=5;
-   ((_tIteratorAccess<STD_UnitTestStruct>)__b).value.d=6.4;
-   _tConstIteratorProxy<int> _a(__a);
-   _tConstIteratorProxy<int> _ax(__ax);
-   _tConstIteratorProxy<STD_UnitTestStruct> _b(__b);
-   _tConstIterator<int> a(_a);
-   _tConstIterator<int> ax(_ax);
-   _tConstIterator<STD_UnitTestStruct> b(_b);
-   _tConstIterator<int> c(a); 
-   ASSERT(_i(a)==5,"");
-   ASSERT(_i(b).i==5,"");
-   ASSERT(a==c,"");
-   c=ax;
-   ASSERT(a!=c,"");
-   ASSERT(ax==c,"");
-   return true;
-}
-*/
 bool __STD__UnitTest__ForwardIterator(){
-   return __STD__Test__ForwardIterator();
-//   return __STD__UnitTest__IteratorProxy()&&
-//      __STD__Test__Iterator()&&
-//      __STD__Test__ConstIterator();
+   return __STD__UnitTest__Iterator()&&
+      __STD__UnitTest__ForwardProxy()&&
+      __STD__Test__ForwardIterator();
 }
 
 #endif
