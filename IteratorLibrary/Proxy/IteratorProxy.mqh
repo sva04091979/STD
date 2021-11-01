@@ -33,7 +33,7 @@ class _tIteratorProxyBase{
 public:
    _tIteratorProxyBase():cAccess(NULL){}
    _tIteratorProxyBase(AccessType& val):cAccess(&val) {}
-   AccessType* __GetAccess() {return cAccess;}
+   AccessType* __GetAccess() const {return cAccess;}
    template<typename IteratorType>
    bool operator ==(const IteratorType& iterator) const {return cAccess==iterator.__GetAccess();}
    template<typename IteratorType>
