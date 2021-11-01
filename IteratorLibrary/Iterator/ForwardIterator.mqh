@@ -46,8 +46,8 @@ bool __STD__Test__ForwardIterator(){
    _tIteratorAccess<int> __a1(_rv(1));
    _tIteratorAccess<int> __a2(_rv(2));
    _tForwardIteratorProxy<int> _a0(__a0);
-   _tForwardIteratorProxy<int> _a1(__a1,_a0);
-   _tForwardIteratorProxy<int> _a2(__a2,_a1);
+   _tForwardIteratorProxy<int> _a1(__a1,&_a0);
+   _tForwardIteratorProxy<int> _a2(__a2,&_a1);
    _tForwardIterator<int> a0(_a0);
    _tForwardIterator<int> a1(_a1);
    _tForwardIterator<int> a2(_a2);
