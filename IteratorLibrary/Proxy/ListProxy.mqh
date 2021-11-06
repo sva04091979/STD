@@ -10,53 +10,52 @@
 #define _tListIteratorProxyBase __std(ListIteratorProxyBase)
 
 
-template<typename AccessType>
-class _tListIteratorProxyBase:public _tForwardIteratorProxyBase<AccessType>{
+template<typename ProxyType,typename AccessType>
+class _tListIteratorProxyBase:public _tForwardIteratorProxyBase<ProxyType,AccessType>{
 protected:
-   _tListIteratorProxyBase* cPrev;
-   _tListIteratorProxyBase():_tForwardIteratorProxyBase<AccessType>(),cPrev(NULL){}
-   _tListIteratorProxyBase(AccessType &val):_tForwardIteratorProxyBase<AccessType>(val),cPrev(NULL){}
-   _tListIteratorProxyBase(_tListIteratorProxyBase* prev, _tListIteratorProxyBase* next):
-      _tForwardIteratorProxyBase<AccessType>(next),cPrev((_tListIteratorProxyBase*)prev){
+   void* cPrev;
+   _tListIteratorProxyBase():_tForwardIteratorProxyBase<ProxyType,AccessType>(),cPrev(NULL){}
+   _tListIteratorProxyBase(AccessType &val):_tForwardIteratorProxyBase<ProxyType,AccessType>(val),cPrev(NULL){}
+   _tListIteratorProxyBase(ProxyType* prev, ProxyType* next):
+      _tForwardIteratorProxyBase<ProxyType,AccessType>(next),cPrev(prev){
       if (prev!=NULL)
-         prev.Next(&this);
+         ((_tListIteratorProxyBase<ProxyType,AccessType>*)prev).Next(&this);
       if (next!=NULL)
          next.Prev(&this);
    }
-   _tListIteratorProxyBase(AccessType &val,_tListIteratorProxyBase* prev,_tListIteratorProxyBase* next):
-      _tForwardIteratorProxyBase<AccessType>(val,next),cPrev((_tListIteratorProxyBase*)prev){
+   _tListIteratorProxyBase(AccessType &val,ProxyType* prev,ProxyType* next):
+      _tForwardIteratorProxyBase<ProxyType,AccessType>(val,next),cPrev(prev){
       if (prev!=NULL)
-         prev.Next(&this);
+         ((_tListIteratorProxyBase<ProxyType,AccessType>*)prev).Next(&this);
       if (next!=NULL)
          next.Prev(&this);
    }
 public:
-   _tListIteratorProxyBase* Prev() const {return cPrev;}
+   ProxyType* Prev() const {return cPrev;}
 protected:
-   void Prev(_tListIteratorProxyBase* prev) {cPrev=prev;}
+   void Prev(void* prev) {cPrev=prev;}
 };
 
-#define __iteratorProxy _tListIteratorProxy
 template<typename Type>
-class _tListIteratorProxy:public _tListIteratorProxyBase<_tIteratorAccess<Type>>{
+class _tListIteratorProxy:public _tListIteratorProxyBase<_tListIteratorProxy<Type>,_tIteratorAccess<Type>>{
 public:
-   _tListIteratorProxy():_tListIteratorProxyBase<_tIteratorAccess<Type>>(){}
-   _tListIteratorProxy(_tIteratorAccess<Type> &val):_tListIteratorProxyBase<_tIteratorAccess<Type>>(val){}
+   _tListIteratorProxy():_tListIteratorProxyBase<_tListIteratorProxy<Type>,_tIteratorAccess<Type>>(){}
+   _tListIteratorProxy(_tIteratorAccess<Type> &val):_tListIteratorProxyBase<_tListIteratorProxy<Type>,_tIteratorAccess<Type>>(val){}
    _tListIteratorProxy(_tListIteratorProxy* prev,_tListIteratorProxy* next):
-      _tListIteratorProxyBase<_tIteratorAccess<Type>>(prev,next){}
+      _tListIteratorProxyBase<_tListIteratorProxy<Type>,_tIteratorAccess<Type>>(prev,next){}
    _tListIteratorProxy(_tIteratorAccess<Type> &val, _tListIteratorProxy* prev, _tListIteratorProxy* next):
-      _tListIteratorProxyBase<_tIteratorAccess<Type>>(val,prev,next){}
+      _tListIteratorProxyBase<_tListIteratorProxy<Type>,_tIteratorAccess<Type>>(val,prev,next){}
 };
 
 template<typename Type>
-class _tConstListIteratorProxy:public _tListIteratorProxyBase<const _tIteratorAccess<Type>>{
+class _tConstListIteratorProxy:public _tListIteratorProxyBase<_tConstListIteratorProxy<Type>,const _tIteratorAccess<Type>>{
 public:
-   _tConstListIteratorProxy():_tListIteratorProxyBase<const _tIteratorAccess<Type>>(){}
-   _tConstListIteratorProxy(const _tIteratorAccess<Type> &val):_tListIteratorProxyBase<const _tIteratorAccess<Type>>(val){}
+   _tConstListIteratorProxy():_tListIteratorProxyBase<_tConstListIteratorProxy<Type>,const _tIteratorAccess<Type>>(){}
+   _tConstListIteratorProxy(const _tIteratorAccess<Type> &val):_tListIteratorProxyBase<_tConstListIteratorProxy<Type>,const _tIteratorAccess<Type>>(val){}
    _tConstListIteratorProxy(_tConstListIteratorProxy* prev,_tConstListIteratorProxy* next):
-      _tListIteratorProxyBase<const _tIteratorAccess<Type>>(prev,next){}
+      _tListIteratorProxyBase<_tConstListIteratorProxy<Type>,const _tIteratorAccess<Type>>(prev,next){}
    _tConstListIteratorProxy(const _tIteratorAccess<Type> &val,_tConstListIteratorProxy* prev,_tConstListIteratorProxy* next):
-      _tListIteratorProxyBase<const _tIteratorAccess<Type>>(val,prev,next){}
+      _tListIteratorProxyBase<_tConstListIteratorProxy<Type>,const _tIteratorAccess<Type>>(val,prev,next){}
 };
 
 #ifdef _UNIT_TEST_

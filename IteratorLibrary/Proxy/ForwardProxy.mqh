@@ -10,39 +10,39 @@
 #define _tForwardIteratorProxyBase __std(ForwardIteratorProxyBase)
 
 
-template<typename AccessType>
+template<typename ProxyType,typename AccessType>
 class _tForwardIteratorProxyBase:public _tIteratorProxyBase<AccessType>{
 protected:
-   _tForwardIteratorProxyBase* cNext;
+   void* cNext;
    _tForwardIteratorProxyBase():_tIteratorProxyBase<AccessType>(),cNext(NULL){}
    _tForwardIteratorProxyBase(AccessType &val):_tIteratorProxyBase<AccessType>(val),cNext(NULL){}
-   _tForwardIteratorProxyBase(const _tForwardIteratorProxyBase* next):
-      _tIteratorProxyBase<AccessType>(),cNext((_tForwardIteratorProxyBase*)next){}
-   _tForwardIteratorProxyBase(AccessType &val,const _tForwardIteratorProxyBase* next):
-      _tIteratorProxyBase<AccessType>(val),cNext((_tForwardIteratorProxyBase*)next){}
+   _tForwardIteratorProxyBase(ProxyType* next):
+      _tIteratorProxyBase<AccessType>(),cNext(next){}
+   _tForwardIteratorProxyBase(AccessType &val,ProxyType* next):
+      _tIteratorProxyBase<AccessType>(val),cNext(next){}
 public:
-   _tForwardIteratorProxyBase* Next() const {return cNext;}
+   ProxyType* Next() const {return cNext;}
 protected:
-   void Next(_tForwardIteratorProxyBase* next) {cNext=next;}
+   void Next(void* next) {cNext=next;}
 };
 
 template<typename Type>
-class _tForwardIteratorProxy:public _tForwardIteratorProxyBase<_tIteratorAccess<Type>>{
+class _tForwardIteratorProxy:public _tForwardIteratorProxyBase<_tForwardIteratorProxy<Type>,_tIteratorAccess<Type>>{
 public:
-   _tForwardIteratorProxy():_tForwardIteratorProxyBase<_tIteratorAccess<Type>>(){}
-   _tForwardIteratorProxy(const _tForwardIteratorProxy* next):_tForwardIteratorProxyBase<_tIteratorAccess<Type>>(next){}
-   _tForwardIteratorProxy(_tIteratorAccess<Type> &val):_tForwardIteratorProxyBase<_tIteratorAccess<Type>>(val){}
-   _tForwardIteratorProxy(_tIteratorAccess<Type> &val,const _tForwardIteratorProxy* next):_tForwardIteratorProxyBase<_tIteratorAccess<Type>>(val,next){}
+   _tForwardIteratorProxy():_tForwardIteratorProxyBase<_tForwardIteratorProxy<Type>,_tIteratorAccess<Type>>(){}
+   _tForwardIteratorProxy(_tForwardIteratorProxy* next):_tForwardIteratorProxyBase<_tForwardIteratorProxy<Type>,_tIteratorAccess<Type>>(next){}
+   _tForwardIteratorProxy(_tIteratorAccess<Type> &val):_tForwardIteratorProxyBase<_tForwardIteratorProxy<Type>,_tIteratorAccess<Type>>(val){}
+   _tForwardIteratorProxy(_tIteratorAccess<Type> &val,_tForwardIteratorProxy* next):_tForwardIteratorProxyBase<_tForwardIteratorProxy<Type>,_tIteratorAccess<Type>>(val,next){}
    
 };
 
 template<typename Type>
-class _tConstForwardIteratorProxy:public _tForwardIteratorProxyBase<const _tIteratorAccess<Type>>{
+class _tConstForwardIteratorProxy:public _tForwardIteratorProxyBase<_tConstForwardIteratorProxy<Type>,const _tIteratorAccess<Type>>{
 public:
-   _tConstForwardIteratorProxy():_tForwardIteratorProxyBase<const _tIteratorAccess<Type>>(){}
-   _tConstForwardIteratorProxy(const _tConstForwardIteratorProxy* next):_tForwardIteratorProxyBase<const _tIteratorAccess<Type>>(next){}
-   _tConstForwardIteratorProxy(const _tIteratorAccess<Type> &val):_tForwardIteratorProxyBase<const _tIteratorAccess<Type>>(val){}
-   _tConstForwardIteratorProxy(const _tIteratorAccess<Type> &val,const _tConstForwardIteratorProxy* next):_tForwardIteratorProxyBase<const _tIteratorAccess<Type>>(val,next){}
+   _tConstForwardIteratorProxy():_tForwardIteratorProxyBase<_tConstForwardIteratorProxy<Type>,const _tIteratorAccess<Type>>(){}
+   _tConstForwardIteratorProxy(_tConstForwardIteratorProxy* next):_tForwardIteratorProxyBase<_tConstForwardIteratorProxy<Type>,const _tIteratorAccess<Type>>(next){}
+   _tConstForwardIteratorProxy(const _tIteratorAccess<Type> &val):_tForwardIteratorProxyBase<_tConstForwardIteratorProxy<Type>,const _tIteratorAccess<Type>>(val){}
+   _tConstForwardIteratorProxy(const _tIteratorAccess<Type> &val,_tConstForwardIteratorProxy* next):_tForwardIteratorProxyBase<_tConstForwardIteratorProxy<Type>,const _tIteratorAccess<Type>>(val,next){}
    
 };
 
