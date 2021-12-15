@@ -11,6 +11,7 @@ public:
    virtual bool IsSigned() const {return false;}
    virtual bool IsIntegral() const {return false;}
    virtual bool IsFloatingPoint() const {return false;}
+   virtual bool IsArray() const {return false;}
    template<typename JSONType>
    const JSONType* Cast() const {return dynamic_cast<JSONType*>(&this);}
    
@@ -37,6 +38,7 @@ public:
       for (uint i=0;i<cSize;delete cArray[i++]);
    }
    STD_EJSONValueType ValueType() const override final {return _eJSON_Array;}
+   bool IsArray() const override {return true;}
    bool operator +=(STD_JSONValue* ptr){
       if (cSize>=cReserv){
          uint newReserv=MathMin(MathMax(cReserv+1,cReserv*3/2),SHORT_MAX);
@@ -106,6 +108,5 @@ public:
    STD_JSONULong(ulong value):STD_JSONIntegral(value){}
 };
 
-STD_JSONLong t(5);
 
 #endif 
