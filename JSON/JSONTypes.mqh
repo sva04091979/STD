@@ -23,6 +23,32 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+class STD_JSONArray:public STD_JSONValue{
+   STD_JSONValue* cArray[];
+   uint cSize;
+   uint cReserv;
+public:
+   STD_JSONArray():cSize(0),cReserv(0){}
+   STD_JSONArray(uint reserv):cSize(0){cReserv=ArrayResize(cArray,reserv);}
+  ~STD_JSONArray(){
+      for (uint i=0;i<cSize;delete cArray[i++]);
+   }
+   STD_EJSONValueType ValueType() const override final {return _eJSON_Array;}
+   bool operator +=(STD_JSONValue* ptr){
+      if (cSize>=cReserv){
+         uint newReserv=MathMin(MathMax(cReserv+1,cReserv*3/2),SHORT_MAX);
+         if (ArrayResize(cArray,newReserv)==-1)
+            return false;
+         cReserv=newReserv;
+      }
+      cArray[cSize++]=ptr;
+      return true;
+   }
+   uint Size() const {return cSize;}
+   const STD_JSONValue* operator [](uint pos) const {return pos<cSize?cArray[pos]:NULL;}
+};
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 class STD_JSONTypeNull:STD_JSONValueStore<void*>{
 public:
    STD_JSONTypeNull():STD_JSONValueStore(NULL){}
