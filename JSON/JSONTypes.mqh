@@ -8,6 +8,9 @@ enum STD_EJSONValueType{_eJSON_Object,_eJSON_Array,_eJSON_Number,_eJSON_String,_
 class STD_JSONValue{
 public:
    virtual STD_EJSONValueType ValueType() const=0;
+   virtual bool IsSigned() const {return false;}
+   virtual bool IsIntegral() const {return false;}
+   virtual bool IsFloatingPoint() const {return false;}
    template<typename JSONType>
    const JSONType* Cast() const {return dynamic_cast<JSONType*>(&this);}
    
@@ -60,6 +63,7 @@ class STD_JSONTypeBool:STD_JSONValueStore<bool>{
 public:
    STD_JSONTypeBool(bool value):STD_JSONValueStore(value){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_Bool;}
+   bool IsIntegral() const override {return true;}
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -70,26 +74,38 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-enum STD_EJSONNumberType{_eJSON_Long,_eJSON_Double};
-
 template<typename Type>
 class STD_JSONTypeNumber:STD_JSONValueStore<Type>{
 public:
    STD_JSONTypeNumber(Type value):STD_JSONValueStore(value){}
-   virtual STD_EJSONNumberType NumberType() const=0;
    STD_EJSONValueType ValueType() const override final {return _eJSON_Number;}
-};
-//////////////////////////////////////////////////////////////////////////////
-class STD_JSONLong:public STD_JSONTypeNumber<long>{
-public:
-   STD_JSONLong(long value):STD_JSONTypeNumber(value){}
-   STD_EJSONNumberType NumberType() const override final {return _eJSON_Long;}
 };
 //////////////////////////////////////////////////////////////////////////////
 class STD_JSONDouble:public STD_JSONTypeNumber<double>{
 public:
    STD_JSONDouble(double value):STD_JSONTypeNumber(value){}
-   STD_EJSONNumberType NumberType() const override final {return _eJSON_Double;}
+   bool IsSigned() const override {return true;}
+   bool IsFloatingPoint() const override {return true;}
 };
+//////////////////////////////////////////////////////////////////////////////
+template<typename Type>
+class STD_JSONIntegral:public STD_JSONTypeNumber<Type>{
+public:
+   STD_JSONIntegral(Type value):STD_JSONTypeNumber(value){}
+   bool IsIntegral() const override {return true;}
+};
+//////////////////////////////////////////////////////////////////////////////
+class STD_JSONLong:public STD_JSONIntegral<long>{
+public:
+   STD_JSONLong(long value):STD_JSONIntegral(value){}
+   bool IsSigned() const override {return true;}
+};
+//////////////////////////////////////////////////////////////////////////////
+class STD_JSONULong:public STD_JSONIntegral<ulong>{
+public:
+   STD_JSONULong(ulong value):STD_JSONIntegral(value){}
+};
+
+STD_JSONLong t(5);
 
 #endif 
