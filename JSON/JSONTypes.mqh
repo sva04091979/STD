@@ -3,7 +3,25 @@
 #ifndef _STD_JSON_TYPES_
 #define _STD_JSON_TYPES_
 
+#ifdef __MQL4__
+   #property strict
+#endif
+
+#ifdef __MQL5__
+   #include <Generic\HashMap.mqh>
+#else
+   #include "Generic\HashMap.mqh"
+#endif
+
 enum STD_EJSONValueType{_eJSON_Object,_eJSON_Array,_eJSON_Number,_eJSON_String,_eJSON_Bool,_eJSON_Null};
+
+class STD_JSONValue;
+
+class STD_JSONPair{
+public:
+   string key;
+   STD_JSONValue* value;
+};
 
 class STD_JSONValue{
 public:
@@ -12,9 +30,69 @@ public:
    virtual bool IsIntegral() const {return false;}
    virtual bool IsFloatingPoint() const {return false;}
    virtual bool IsArray() const {return false;}
+   virtual bool IsObject() const {return false;}
    template<typename JSONType>
    const JSONType* Cast() const {return dynamic_cast<JSONType*>(&this);}
    
+};
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+template<typename Type>
+class STD_JSONColection:public STD_JSONValue{
+   Type* cArray[];
+   uint cSize;
+   uint cReserv;
+public:
+  ~STD_JSONColection(){
+      for (uint i=0;i<cSize;delete cArray[i++]);
+   }
+   uint Size() const {return cSize;}
+   const Type* operator [](uint pos) const {return pos<cSize?cArray[pos]:NULL;}
+protected:
+   STD_JSONColection():cSize(0),cReserv(0){}
+   STD_JSONColection(uint reserv):cSize(0){cReserv=ArrayResize(cArray,reserv);}
+   bool Add(Type* ptr){
+      if (cSize>=cReserv){
+         uint newReserv=MathMin(MathMax(cReserv+1,cReserv*3/2),SHORT_MAX);
+         if (ArrayResize(cArray,newReserv)==-1){
+            delete ptr;
+            return false;
+         }
+         cReserv=newReserv;
+      }
+      cArray[cSize++]=ptr;
+      return true;
+   }
+};
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+class STD_JSONObject:public STD_JSONColection<STD_JSONPair>{
+   CHashMap<string,STD_JSONValue*> cMap;
+public:
+   STD_JSONObject():STD_JSONColection(){}
+   STD_JSONObject(uint reserv):STD_JSONColection(reserv){}
+   STD_EJSONValueType ValueType() const override final {return _eJSON_Object;}
+   bool IsObject() const override final {return true;}
+   bool operator +=(STD_JSONPair* ptr){
+      bool res=cMap.Add(ptr.key,ptr.value);
+      if (res&&!(res=Add(ptr)))
+         cMap.Remove(ptr.key);
+      return res;
+   }
+   const STD_JSONValue* operator [](string key) const {
+      STD_JSONValue* ret=NULL;
+      return ((CHashMap<string,STD_JSONValue*>*)&cMap).TryGetValue(key,ret)?ret:NULL;
+   }
+};
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+class STD_JSONArray:public STD_JSONColection<STD_JSONValue>{
+public:
+   STD_JSONArray():STD_JSONColection(){}
+   STD_JSONArray(uint reserv):STD_JSONColection(reserv){}
+   STD_EJSONValueType ValueType() const override final{return _eJSON_Array;}
+   bool IsArray() const override final {return true;}
+   bool operator +=(STD_JSONValue* ptr){return Add(ptr);}
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -24,33 +102,6 @@ class STD_JSONValueStore:public STD_JSONValue{
 public:
    STD_JSONValueStore(Type value):cValue(value){}
    Type Value() const {return cValue;}
-};
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-class STD_JSONArray:public STD_JSONValue{
-   STD_JSONValue* cArray[];
-   uint cSize;
-   uint cReserv;
-public:
-   STD_JSONArray():cSize(0),cReserv(0){}
-   STD_JSONArray(uint reserv):cSize(0){cReserv=ArrayResize(cArray,reserv);}
-  ~STD_JSONArray(){
-      for (uint i=0;i<cSize;delete cArray[i++]);
-   }
-   STD_EJSONValueType ValueType() const override final {return _eJSON_Array;}
-   bool IsArray() const override {return true;}
-   bool operator +=(STD_JSONValue* ptr){
-      if (cSize>=cReserv){
-         uint newReserv=MathMin(MathMax(cReserv+1,cReserv*3/2),SHORT_MAX);
-         if (ArrayResize(cArray,newReserv)==-1)
-            return false;
-         cReserv=newReserv;
-      }
-      cArray[cSize++]=ptr;
-      return true;
-   }
-   uint Size() const {return cSize;}
-   const STD_JSONValue* operator [](uint pos) const {return pos<cSize?cArray[pos]:NULL;}
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -107,6 +158,5 @@ class STD_JSONULong:public STD_JSONIntegral<ulong>{
 public:
    STD_JSONULong(ulong value):STD_JSONIntegral(value){}
 };
-
 
 #endif 
