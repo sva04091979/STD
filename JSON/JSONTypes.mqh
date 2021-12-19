@@ -21,6 +21,9 @@ class STD_JSONPair{
 public:
    string key;
    STD_JSONValue* value;
+  ~STD_JSONPair(){
+   DEL(value);
+   }
 };
 
 class STD_JSONValue{
@@ -74,6 +77,8 @@ public:
    STD_EJSONValueType ValueType() const override final {return _eJSON_Object;}
    bool IsObject() const override final {return true;}
    bool operator +=(STD_JSONPair* ptr){
+      if (!ptr)
+         return false;
       bool res=cMap.Add(ptr.key,ptr.value);
       if (res&&!(res=Add(ptr)))
          cMap.Remove(ptr.key);
@@ -92,7 +97,7 @@ public:
    STD_JSONArray(uint reserv):STD_JSONColection(reserv){}
    STD_EJSONValueType ValueType() const override final{return _eJSON_Array;}
    bool IsArray() const override final {return true;}
-   bool operator +=(STD_JSONValue* ptr){return Add(ptr);}
+   bool operator +=(STD_JSONValue* ptr){return !ptr?false:Add(ptr);}
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
