@@ -110,14 +110,14 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-class STD_JSONTypeNull:STD_JSONValueStore<void*>{
+class STD_JSONTypeNull:public STD_JSONValueStore<void*>{
 public:
    STD_JSONTypeNull():STD_JSONValueStore(NULL){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_Null;}
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-class STD_JSONTypeBool:STD_JSONValueStore<bool>{
+class STD_JSONTypeBool:public STD_JSONValueStore<bool>{
 public:
    STD_JSONTypeBool(bool value):STD_JSONValueStore(value){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_Bool;}
@@ -125,7 +125,7 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-class STD_JSONTypeString:STD_JSONValueStore<string>{
+class STD_JSONTypeString:public STD_JSONValueStore<string>{
 public:
    STD_JSONTypeString(string value):STD_JSONValueStore(value){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_String;}
@@ -133,7 +133,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 template<typename Type>
-class STD_JSONTypeNumber:STD_JSONValueStore<Type>{
+class STD_JSONTypeNumber:public STD_JSONValueStore<Type>{
 public:
    STD_JSONTypeNumber(Type value):STD_JSONValueStore(value){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_Number;}
