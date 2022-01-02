@@ -34,8 +34,9 @@ public:
    virtual bool IsFloatingPoint() const {return false;}
    virtual bool IsArray() const {return false;}
    virtual bool IsObject() const {return false;}
+   virtual ulong Size() const {return 1;}
    template<typename JSONType>
-   const JSONType* Cast() const {return dynamic_cast<JSONType*>(&this);}
+   const JSONType* Cast() const {return dynamic_cast<const JSONType*>(&this);}
    
 };
 //////////////////////////////////////////////////////////////////////////////
@@ -49,7 +50,7 @@ public:
   ~STD_JSONColection(){
       for (uint i=0;i<cSize;delete cArray[i++]);
    }
-   uint Size() const {return cSize;}
+   ulong Size() const override final{return cSize;}
    const Type* operator [](uint pos) const {return pos<cSize?cArray[pos]:NULL;}
 protected:
    STD_JSONColection():cSize(0),cReserv(0){}
@@ -110,46 +111,46 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-class STD_JSONTypeNull:public STD_JSONValueStore<void*>{
+class STD_JSONNull:public STD_JSONValueStore<void*>{
 public:
-   STD_JSONTypeNull():STD_JSONValueStore(NULL){}
+   STD_JSONNull():STD_JSONValueStore(NULL){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_Null;}
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-class STD_JSONTypeBool:public STD_JSONValueStore<bool>{
+class STD_JSONBool:public STD_JSONValueStore<bool>{
 public:
-   STD_JSONTypeBool(bool value):STD_JSONValueStore(value){}
+   STD_JSONBool(bool value):STD_JSONValueStore(value){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_Bool;}
    bool IsIntegral() const override {return true;}
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-class STD_JSONTypeString:public STD_JSONValueStore<string>{
+class STD_JSONString:public STD_JSONValueStore<string>{
 public:
-   STD_JSONTypeString(string value):STD_JSONValueStore(value){}
+   STD_JSONString(string value):STD_JSONValueStore(value){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_String;}
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 template<typename Type>
-class STD_JSONTypeNumber:public STD_JSONValueStore<Type>{
+class STD_JSONNumber:public STD_JSONValueStore<Type>{
 public:
-   STD_JSONTypeNumber(Type value):STD_JSONValueStore(value){}
+   STD_JSONNumber(Type value):STD_JSONValueStore(value){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_Number;}
 };
 //////////////////////////////////////////////////////////////////////////////
-class STD_JSONDouble:public STD_JSONTypeNumber<double>{
+class STD_JSONDouble:public STD_JSONNumber<double>{
 public:
-   STD_JSONDouble(double value):STD_JSONTypeNumber(value){}
+   STD_JSONDouble(double value):STD_JSONNumber(value){}
    bool IsSigned() const override {return true;}
    bool IsFloatingPoint() const override {return true;}
 };
 //////////////////////////////////////////////////////////////////////////////
 template<typename Type>
-class STD_JSONIntegral:public STD_JSONTypeNumber<Type>{
+class STD_JSONIntegral:public STD_JSONNumber<Type>{
 public:
-   STD_JSONIntegral(Type value):STD_JSONTypeNumber(value){}
+   STD_JSONIntegral(Type value):STD_JSONNumber(value){}
    bool IsIntegral() const override {return true;}
 };
 //////////////////////////////////////////////////////////////////////////////

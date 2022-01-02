@@ -16,6 +16,7 @@ public:
    static STD_JSONValue* ParseNumber(ushort &json[],uint &i);
    static STD_JSONValue* ParseNull(ushort &json[],uint &i);
    static STD_JSONValue* ParseBool(ushort &json[],uint &i);
+   static STD_JSONValue* ParseArray(ushort &json[],uint &i);
 private:
    static bool CheckNegative(ushort &json[],uint &i,bool &isError);
    static bool CheckFloatingPoint(ushort &json[],uint &i,bool &isError);
@@ -53,7 +54,6 @@ STD_JSONObject* STD_JSONParser::ParseObject(ushort &json[],uint &i){
             }
             if (json[i]=='}')
                return object;
-            
             break;
          case '\0':
             PrintFormat("JSON object parse error in %s, reason: end of string",__FUNCSIG__);
@@ -173,7 +173,7 @@ STD_JSONValue* STD_JSONParser::ParseValue(ushort &json[],uint &i){
                PrintFormat("JSON value parse error in %s, reason: wrong string parse",__FUNCSIG__);
                return NULL;
             }
-            value=new STD_JSONTypeString(text);
+            value=new STD_JSONString(text);
             isStop=true;
             break;
          }
@@ -183,6 +183,7 @@ STD_JSONValue* STD_JSONParser::ParseValue(ushort &json[],uint &i){
                PrintFormat("JSON value parse error in %s, reason: wrong number parse",__FUNCSIG__);
                return NULL;
             }
+            --i;
             isStop=true;
             break;
          case '{':
@@ -328,7 +329,7 @@ STD_JSONValue* STD_JSONParser::ParseNull(ushort &json[],uint &i){
       PrintFormat("JSON null parse error in %s, reason: unsupported character %s in position %u",__FUNCSIG__,ShortToString(json[i]),i);
       return NULL;
    }
-   return new STD_JSONTypeNull();            
+   return new STD_JSONNull();            
 }
 //-----------------------------------------------------------------------------------------------------------
 STD_JSONValue* STD_JSONParser::ParseBool(ushort &json[],uint &i){
@@ -359,10 +360,32 @@ STD_JSONValue* STD_JSONParser::ParseBool(ushort &json[],uint &i){
             --i;
             break;
       }
-      return new STD_JSONTypeBool(res);
+      return new STD_JSONBool(res);
    }
    PrintFormat("JSON bool parse error in %s, reason: unsupported character %s in position %u",__FUNCSIG__,ShortToString(json[i]),i);
    return NULL;
+}
+//-----------------------------------------------------------------------------------------------------------
+STD_JSONValue* STD_JSONParser::ParseArray(ushort &json[],uint &i){
+   if (json[i]!='['){
+      PrintFormat("JSON array parse error in %s, reason: wrong first character %s in position %u",__FUNCSIG__,ShortToString(json[i]),i);
+      return NULL;
+   }
+   STD_JSONArray* array=new STD_JSONArray;
+   while(true){
+      ++i;
+      array+=ParseValue(json,i);
+      switch(json[i]){
+         default:
+            PrintFormat("JSON array parse error in %s",__FUNCSIG__);
+            delete array;
+            return NULL;
+         case ']':
+            return array;
+         case ',':
+            break;
+      }
+   }
 }
 
 #endif
