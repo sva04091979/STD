@@ -8,33 +8,26 @@
 class STD_JSONParser{
 public:
    static STD_JSONObject* Parse(string text);
-   static STD_JSONObject* ParseObject(ushort &json[],uint &i);
-   static STD_JSONPair* ParsePair(ushort &json[],uint &i);
-   static string ParseString(ushort &json[],uint &i);
-   static bool CheckShield(ushort &json[],uint &i);
-   static STD_JSONValue* ParseValue(ushort &json[],uint &i);
-   static STD_JSONValue* ParseNumber(ushort &json[],uint &i);
-   static STD_JSONValue* ParseNull(ushort &json[],uint &i);
-   static STD_JSONValue* ParseBool(ushort &json[],uint &i);
-   static STD_JSONValue* ParseArray(ushort &json[],uint &i);
+   static STD_JSONObject* ParseObject(string &json,uint &i);
+   static STD_JSONPair* ParsePair(string &json,uint &i);
+   static string ParseString(string &json,uint &i);
+   static bool CheckShield(string &json,uint &i);
+   static STD_JSONValue* ParseValue(string &json,uint &i);
+   static STD_JSONValue* ParseNumber(const string &json,uint &i);
+   static STD_JSONValue* ParseNull(const string &json,uint &i);
+   static STD_JSONValue* ParseBool(const string &json,uint &i);
+   static STD_JSONValue* ParseArray(string &json,uint &i);
 private:
-   static bool CheckNegative(ushort &json[],uint &i,bool &isError);
-   static bool CheckFloatingPoint(ushort &json[],uint &i,bool &isError);
+   static bool CheckNegative(const string &json,uint &i,bool &isError);
+   static bool CheckFloatingPoint(const string &json,uint &i,bool &isError);
 };
 //----------------------------------------------------------------------
 const STD_JSONObject* STD_JSONParser::Parse(string text){
-   STD_JSONObject* ret=NULL;
-   ushort json[];
    uint i=0;
-   if (StringToShortArray(text,json)!=0)
-      return ParseObject(json,i);
-   else{
-      Print("JSON parse error");
-      return NULL;
-   }
+   return ParseObject(text,i);
 }
 //-----------------------------------------------------------------------
-STD_JSONObject* STD_JSONParser::ParseObject(ushort &json[],uint &i){
+STD_JSONObject* STD_JSONParser::ParseObject(string &json,uint &i){
    if (json[i]!='{'){
       PrintFormat("JSON object parse error in %s, reason: wrong first character %s in position %u",__FUNCSIG__,ShortToString(json[i]),i);
       return NULL;
@@ -67,7 +60,7 @@ STD_JSONObject* STD_JSONParser::ParseObject(ushort &json[],uint &i){
    }
 }
 //-----------------------------------------------------------------------
-STD_JSONPair* STD_JSONParser::ParsePair(ushort &json[],uint &i){
+STD_JSONPair* STD_JSONParser::ParsePair(string &json,uint &i){
    STD_JSONPair* pair=new STD_JSONPair;
    pair.key=ParseString(json,i);
    if (pair.key==NULL){
@@ -99,7 +92,7 @@ STD_JSONPair* STD_JSONParser::ParsePair(ushort &json[],uint &i){
    }
 }
 //-----------------------------------------------------------------------------------
-string STD_JSONParser::ParseString(ushort &json[],uint &i){
+string STD_JSONParser::ParseString(string &json,uint &i){
    if (json[i]!='"'){
       PrintFormat("JSON string parse error in %s, reason: wrong character %s in position %u, expected \"",__FUNCSIG__,ShortToString(json[i]),i);
       return NULL;
@@ -115,7 +108,7 @@ string STD_JSONParser::ParseString(ushort &json[],uint &i){
             PrintFormat("JSON string parse error in %s, reason: end of string",__FUNCSIG__);
             return NULL;
          case '"':
-            return ShortArrayToString(json,start,count);
+            return StringSubstr(json,start,count);
          case '\\':
             if (!CheckShield(json,i)){
                PrintFormat("JSON strig parse error in %s, reason: wrong shield parse",__FUNCSIG__);
@@ -126,7 +119,7 @@ string STD_JSONParser::ParseString(ushort &json[],uint &i){
    }
 }
 //-----------------------------------------------------------------------------------------
-bool STD_JSONParser::CheckShield(ushort &json[],uint &i){
+bool STD_JSONParser::CheckShield(string &json,uint &i){
    if (json[i]!='\\'){
       PrintFormat("JSON shield parse error in %s, reason: wrong character %s in position %u, expected \\",__FUNCSIG__,ShortToString(json[i]),i);
       return false;
@@ -142,7 +135,7 @@ bool STD_JSONParser::CheckShield(ushort &json[],uint &i){
          case '"':case '\\':case 'n':case 'r':case 't':
             return true;
          case 'u':
-            json[i]='x';
+            StringSetCharacter(json,i,'x');
             switch(json[++i]){
                default:
                   PrintFormat("JSON shield parse error in %s, reason: wrong character %s in position %u, expected hex code",__FUNCSIG__,ShortToString(json[i]),i);
@@ -154,7 +147,7 @@ bool STD_JSONParser::CheckShield(ushort &json[],uint &i){
    }
 }
 //----------------------------------------------------------------------------------------------------
-STD_JSONValue* STD_JSONParser::ParseValue(ushort &json[],uint &i){
+STD_JSONValue* STD_JSONParser::ParseValue(string &json,uint &i){
    bool isStop=false;
    STD_JSONValue* value=NULL;
    while(!isStop){
@@ -236,7 +229,7 @@ STD_JSONValue* STD_JSONParser::ParseValue(ushort &json[],uint &i){
       }
 }
 //---------------------------------------------------------------------------------------------------------
-STD_JSONValue* STD_JSONParser::ParseNumber(ushort &json[],uint &i){
+STD_JSONValue* STD_JSONParser::ParseNumber(const string &json,uint &i){
    string text=NULL;
    uint start=i;
    bool isError=false;
@@ -247,18 +240,18 @@ STD_JSONValue* STD_JSONParser::ParseNumber(ushort &json[],uint &i){
       bool isFloatingPoint=CheckFloatingPoint(json,i,isError);
       if(!isError){
          if (isFloatingPoint)
-            return new STD_JSONDouble(StringToDouble(ShortArrayToString(json,start,i-start)));
+            return new STD_JSONDouble(StringToDouble(StringSubstr(json,start,i-start)));
          else if (isNegative)
-            return new STD_JSONLong(StringToInteger(ShortArrayToString(json,start,i-start)));
+            return new STD_JSONLong(StringToInteger(StringSubstr(json,start,i-start)));
          else
-            return new STD_JSONULong(StringToInteger(ShortArrayToString(json,start,i-start)));
+            return new STD_JSONULong(StringToInteger(StringSubstr(json,start,i-start)));
       }
    }
    PrintFormat("JSON number parse error in %s",__FUNCSIG__);
    return NULL;
 };
 //---------------------------------------------------------------------------------------------------------
-bool STD_JSONParser::CheckNegative(ushort &json[],uint &i,bool &isError){
+bool STD_JSONParser::CheckNegative(const string &json,uint &i,bool &isError){
    isError=false;
    switch(json[i]){
       default:
@@ -276,7 +269,7 @@ bool STD_JSONParser::CheckNegative(ushort &json[],uint &i,bool &isError){
    };
 };
 //-------------------------------------------------------------------------------------------------------------
-bool STD_JSONParser::CheckFloatingPoint(ushort &json[],uint &i,bool &isError){
+bool STD_JSONParser::CheckFloatingPoint(const string &json,uint &i,bool &isError){
    bool isFloatingPoint=false;
    bool isExpotencial=false;
    while(true){
@@ -321,7 +314,7 @@ bool STD_JSONParser::CheckFloatingPoint(ushort &json[],uint &i,bool &isError){
    }
 };
 //-----------------------------------------------------------------------------------------------------------
-STD_JSONValue* STD_JSONParser::ParseNull(ushort &json[],uint &i){
+STD_JSONValue* STD_JSONParser::ParseNull(const string &json,uint &i){
    if (json[i]!='n'||
        json[++i]!='u'||
        json[++i]!='l'||
@@ -332,7 +325,7 @@ STD_JSONValue* STD_JSONParser::ParseNull(ushort &json[],uint &i){
    return new STD_JSONNull();            
 }
 //-----------------------------------------------------------------------------------------------------------
-STD_JSONValue* STD_JSONParser::ParseBool(ushort &json[],uint &i){
+STD_JSONValue* STD_JSONParser::ParseBool(const string &json,uint &i){
    bool res=false;
    bool isOk=false;
    if (json[i]=='t'){
@@ -366,7 +359,7 @@ STD_JSONValue* STD_JSONParser::ParseBool(ushort &json[],uint &i){
    return NULL;
 }
 //-----------------------------------------------------------------------------------------------------------
-STD_JSONValue* STD_JSONParser::ParseArray(ushort &json[],uint &i){
+STD_JSONValue* STD_JSONParser::ParseArray(string &json,uint &i){
    if (json[i]!='['){
       PrintFormat("JSON array parse error in %s, reason: wrong first character %s in position %u",__FUNCSIG__,ShortToString(json[i]),i);
       return NULL;
