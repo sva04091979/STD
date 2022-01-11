@@ -24,6 +24,9 @@ public:
   ~STD_JSONPair(){
    DEL(value);
    }
+   string ToString(){
+      return "\""+key+"\":"+value.ToString();
+   }
 };
 
 class STD_JSONValue{
@@ -44,6 +47,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 template<typename Type>
 class STD_JSONColection:public STD_JSONValue{
+protected:
    Type* cArray[];
    uint cSize;
    uint cReserv;
@@ -68,6 +72,17 @@ protected:
       cArray[cSize++]=ptr;
       return true;
    }
+   string CollectionToString() const{
+      string ret="";
+      if (cSize>0){
+         uint i=0;
+         ret+=cArray[i].ToString();
+         while(++i<cSize){
+            ret+=","+cArray[i].ToString();
+         }
+      }
+      return ret;
+   }
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -90,6 +105,9 @@ public:
       STD_JSONValue* ret=NULL;
       return ((CHashMap<string,STD_JSONValue*>*)&cMap).TryGetValue(key,ret)?ret:NULL;
    }
+   string ToString() const override {
+      return "{"+CollectionToString()+"}";
+   }
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -100,6 +118,9 @@ public:
    STD_EJSONValueType ValueType() const override final{return _eJSON_Array;}
    bool IsArray() const override final {return true;}
    bool operator +=(STD_JSONValue* ptr){return !ptr?false:Add(ptr);}
+   string ToString() const override {
+      return "["+CollectionToString()+"]";
+   }
 };
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -143,6 +164,7 @@ class STD_JSONNumber:public STD_JSONValueStore<Type>{
 public:
    STD_JSONNumber(Type value):STD_JSONValueStore(value){}
    STD_EJSONValueType ValueType() const override final {return _eJSON_Number;}
+   string ToString() const override {return (string)cValue;}
 };
 //////////////////////////////////////////////////////////////////////////////
 class STD_JSONDouble:public STD_JSONNumber<double>{
@@ -150,7 +172,6 @@ public:
    STD_JSONDouble(double value):STD_JSONNumber(value){}
    bool IsSigned() const override {return true;}
    bool IsFloatingPoint() const override {return true;}
-   string ToString() const override {return DoubleToString(cValue);}
 };
 //////////////////////////////////////////////////////////////////////////////
 template<typename Type>
@@ -158,7 +179,6 @@ class STD_JSONIntegral:public STD_JSONNumber<Type>{
 public:
    STD_JSONIntegral(Type value):STD_JSONNumber(value){}
    bool IsIntegral() const override {return true;}
-   string ToString() const override {return IntegerToString(cValue);}
 };
 //////////////////////////////////////////////////////////////////////////////
 class STD_JSONLong:public STD_JSONIntegral<long>{
