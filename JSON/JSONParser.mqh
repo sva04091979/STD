@@ -315,10 +315,11 @@ bool STD_JSONParser::CheckFloatingPoint(const string &json,uint &i,bool &isError
 };
 //-----------------------------------------------------------------------------------------------------------
 STD_JSONValue* STD_JSONParser::ParseNull(const string &json,uint &i){
-   if (json[i]!='n'||
+   bool fail=json[i]!='n'||
        json[++i]!='u'||
        json[++i]!='l'||
-       json[++i]!='l'){
+       json[++i]!='l';
+   if (fail){
       PrintFormat("JSON null parse error in %s, reason: unsupported character %s in position %u",__FUNCSIG__,ShortToString(json[i]),i);
       return NULL;
    }
@@ -336,7 +337,7 @@ STD_JSONValue* STD_JSONParser::ParseBool(const string &json,uint &i){
       isOk=true;
       }
    }
-   else if (json[++i]=='f'&&
+   else if (json[i]=='f'&&
             json[++i]=='a'&&
             json[++i]=='l'&&
             json[++i]=='s'&&
@@ -366,12 +367,11 @@ STD_JSONValue* STD_JSONParser::ParseArray(string &json,uint &i){
    }
    STD_JSONArray* array=new STD_JSONArray;
    while(true){
-      ++i;
       array+=ParseValue(json,i);
       switch(json[i]){
          default:
             PrintFormat("JSON array parse error in %s",__FUNCSIG__);
-            delete array;
+            DEL(array);
             return NULL;
          case ']':
             return array;
