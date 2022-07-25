@@ -2,7 +2,7 @@
 #define _STD_CHART_
 
 #include "..\Define\StdDefine.mqh"
-#include "Symbol.mqh"
+#include "..\Symbol\Symbol.mqh"
 
 #define tChart __std(CChart)
 #define tdeclChart __decl(CChart)

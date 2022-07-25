@@ -122,6 +122,8 @@ enum _tdeclECompare{
 #define _eUp __std(UP)
 #define _eDown __std(DOWN)
 #define _eNoDirect __std(NO_DIRECT)
+#define _eBuy _eUp
+#define _eSell _eDown
 enum _tdeclEDirect{
    __decl(DOWN)=-1,
    __decl(NO_DIRECT)=0,

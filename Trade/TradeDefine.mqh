@@ -3,6 +3,7 @@
 #ifndef _STD_TRADE_DEFINE_
 #define _STD_TRADE_DEFINE_
 
+#include "../Common/Flag.mqh"
 #include "../Math/Math.mqh"
 
 #define _tTradeConst STD_TradeConst
@@ -13,8 +14,35 @@
    #define _tTradeError int
 #endif
 
-struct TradeState{
+class TradeState:public _tFlag{
+public:
+   static _tSizeT slChanging;
+   static _tSizeT tpChanging;
+   static _tSizeT slHasChanged;
+   static _tSizeT tpHasChanged;
+   static _tSizeT moving;
+   static _tSizeT hasMoved;
+   static _tSizeT closing;
+   static _tSizeT hasclosed;
+   static _tSizeT partialClosing;
+   static _tSizeT hasPartialClosed;
 };
+_tSizeT TradeState::slChanging=0x1;
+_tSizeT TradeState::tpChanging=0x2;
+_tSizeT TradeState::slHasChanged=0x4;
+_tSizeT TradeState::tpHasChanged=0x8;
+_tSizeT TradeState::moving=0x10;
+_tSizeT TradeState::hasMoved=0x20;
+_tSizeT TradeState::closing=0x40;
+_tSizeT TradeState::hasclosed=0x80;
+_tSizeT TradeState::partialClosing=0x100;
+_tSizeT TradeState::hasPartialClosed=0x200;
+
+class TradeInitState:public _tFlag{
+public:
+   static _tSizeT wrongSymbol;
+};
+_tSizeT TradeInitState::wrongSymbol=0x1;
 
 enum ECloseReason{
    eCloseReasonNull,
@@ -27,7 +55,6 @@ enum ECloseReason{
 class STD_TradeConst{
 public:
    string                  symbol;
-   int                     lotDigits;
    double                  lotStep;
    double                  lotMax;
    double                  lotMin;
@@ -36,6 +63,7 @@ public:
    double                  stopLevel;
    double                  freezeLevel;
    int                     digits;
+   int                     lotDigits;
    ENUM_SYMBOL_TRADE_EXECUTION   executionMode;
 #ifdef __MQL5__
    ENUM_ACCOUNT_MARGIN_MODE      marginMode;
