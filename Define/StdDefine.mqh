@@ -6,11 +6,13 @@
    #define _tPtrDiffT long
    #define _tTicket ulong
    #define _tAccountNumber long
+   #define tMagic ulong
 #else
    #define _tSizeT uint
    #define _tPtrDiffT int
    #define _tTicket int
    #define _tAccountNumber int
+   #define tMagic int
 #endif
 
 #define NAMESPACE(dName)
@@ -169,6 +171,17 @@ struct STD_UnitTestStruct{
    double d;
 };
 
+<<<<<<< HEAD
+=======
+#ifdef __MQL5__
+   double AccountBalance() {return AccountInfoDouble(ACCOUNT_BALANCE);}
+   double AccountEquity()  {return AccountInfoDouble(ACCOUNT_EQUITY);}
+   double AccountFreeMargin() {return AccountInfoDouble(ACCOUNT_MARGIN_FREE);}
+   long AccountNumber() {return AccountInfoInteger(ACCOUNT_LOGIN);}
+   bool IsTesting() {return (bool)MQLInfoInteger(MQL_TESTER);}
+   bool IsOptimization() {return (bool)MQLInfoInteger(MQL_OPTIMIZATION);}
+   datetime OrderCloseTime() {return 0;}
+>>>>>>> master
 #endif
 
 #endif

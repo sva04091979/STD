@@ -17,9 +17,9 @@
 #define DATABASE_OPEN_COMMON 0x1000
 
 #ifdef DB_NO_ERROR_CONTROL
-   #define ErrorSet(dErr)
+   #define ErrorSet(dErr) do while(false)
 #else
-   #define ErrorSet(dErr) SQLiteError=dErr
+   #define ErrorSet(dErr) do SQLiteError=dErr; while(false)
 #endif
 
 #import "sqlite3.dll"
