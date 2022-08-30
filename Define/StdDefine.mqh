@@ -171,8 +171,8 @@ struct STD_UnitTestStruct{
    double d;
 };
 
-<<<<<<< HEAD
-=======
+#endif
+
 #ifdef __MQL5__
    double AccountBalance() {return AccountInfoDouble(ACCOUNT_BALANCE);}
    double AccountEquity()  {return AccountInfoDouble(ACCOUNT_EQUITY);}
@@ -181,7 +181,6 @@ struct STD_UnitTestStruct{
    bool IsTesting() {return (bool)MQLInfoInteger(MQL_TESTER);}
    bool IsOptimization() {return (bool)MQLInfoInteger(MQL_OPTIMIZATION);}
    datetime OrderCloseTime() {return 0;}
->>>>>>> master
 #endif
 
 #endif
