@@ -25,6 +25,7 @@ public:
    template<typename T1>
    _tdeclSharedPtr<T1> DynamicCast() {_tdeclSharedPtr<T1> ret(dynamic_cast<T1*>(cObject),cCount); return ret;}
    T* Dereference() {return cObject;}
+   const T* Dereference() const {return cObject;}
    T* Get()         {return cObject;}
    void Free();
    void operator =(_tdeclSharedPtr<T> &other);
